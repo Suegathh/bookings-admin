@@ -30,8 +30,9 @@ export const createRoom = createAsyncThunk(
         },
         method: "POST",
         body: JSON.stringify(roomData),
+        credentials: "include", // Add this line to include cookies
       });
-
+      
       if (!res.ok) {
         const error = await res.json();
         return thunkApi.rejectWithValue(error);
