@@ -20,7 +20,9 @@ const EditRoom = () => {
   useEffect(() => {
     const getRoom = async () => {
       try {
-        const res = await fetch(`/api/rooms/${id}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/rooms/${id}`);
+        
+
         const data = await res.json();
   
         
