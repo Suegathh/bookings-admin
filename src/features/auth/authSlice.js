@@ -3,13 +3,22 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Fetch user data from localStorage
 const user = JSON.parse(localStorage.getItem("user")) || null;
 
+// Add this function to handle URL construction properly
+const buildUrl = (base, path) => {
+    // Remove trailing slash from base if it exists
+    const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+    // Remove leading slash from path if it exists
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return `${cleanBase}/${cleanPath}`;
+};
+
 // Register User
 export const registerUser = createAsyncThunk("auth/register", async (userData, thunkApi) => {
     try {
-        const apiUrl = `${process.env.REACT_APP_API_URL}/api/users`;
+        const apiUrl = buildUrl(process.env.REACT_APP_API_URL, 'api/users');
         console.log('Request URL:', apiUrl);
 
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
+        const res = await fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -37,7 +46,10 @@ export const registerUser = createAsyncThunk("auth/register", async (userData, t
 // Login User
 export const loginUser = createAsyncThunk("auth/login", async (userData, thunkApi) => {
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
+        const apiUrl = buildUrl(process.env.REACT_APP_API_URL, 'api/users/login');
+        console.log('Request URL:', apiUrl);
+
+        const res = await fetch(apiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -65,7 +77,10 @@ export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAp
 // Logout User
 export const logoutUser = createAsyncThunk("auth/logout", async (_, thunkApi) => {
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/logout`, {
+        const apiUrl = buildUrl(process.env.REACT_APP_API_URL, 'api/users/logout');
+        console.log('Request URL:', apiUrl);
+
+        const res = await fetch(apiUrl, {
             method: "GET",
             credentials: "include", // ✅ Ensures cookies are cleared properly
         });
