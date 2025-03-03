@@ -2,6 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const API_URL = process.env.REACT_APP_API_URL; // Get backend URL from environment variables
 
+// Add buildUrl function to handle URL construction properly
+const buildUrl = (base, path) => {
+    // Remove trailing slash from base if it exists
+    const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+    // Remove leading slash from path if it exists
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return `${cleanBase}/${cleanPath}`;
+};
+
 const initialState = {
   rooms: [],
   isLoading: false,
@@ -15,7 +24,7 @@ export const createRoom = createAsyncThunk(
   "room/create",
   async (roomData, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/api/rooms`, {
+      const res = await fetch(buildUrl(API_URL, 'api/rooms'), {
         headers: {
           "Content-Type": "application/json",
         },
@@ -40,7 +49,7 @@ export const createRoom = createAsyncThunk(
 // Get all rooms
 export const getRooms = createAsyncThunk("room/getall", async (_, thunkApi) => {
   try {
-    const res = await fetch(`${API_URL}/api/rooms`);
+    const res = await fetch(buildUrl(API_URL, 'api/rooms'));
     if (!res.ok) {
       const error = await res.json();
       return thunkApi.rejectWithValue(error);
@@ -60,7 +69,7 @@ export const updateRoom = createAsyncThunk(
   async (roomData, thunkApi) => {
     try {
       const { roomId, ...rest } = roomData;
-      const res = await fetch(`${API_URL}/api/rooms/${roomId}`, {
+      const res = await fetch(buildUrl(API_URL, `api/rooms/${roomId}`), {
         headers: {
           "Content-type": "application/json",
         },
@@ -85,7 +94,7 @@ export const deleteRoom = createAsyncThunk(
   "room/delete",
   async (roomId, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/api/rooms/${roomId}`, {
+      const res = await fetch(buildUrl(API_URL, `api/rooms/${roomId}`), {
         method: "DELETE",
       });
       const data = await res.json();
