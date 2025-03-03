@@ -6,6 +6,9 @@ const user = JSON.parse(localStorage.getItem("user")) || null;
 // Register User
 export const registerUser = createAsyncThunk("auth/register", async (userData, thunkApi) => {
     try {
+        const apiUrl = `${process.env.REACT_APP_API_URL}/api/users`;
+        console.log('Request URL:', apiUrl);
+
         const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
             method: "POST",
             headers: {
