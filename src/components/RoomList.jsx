@@ -4,9 +4,12 @@ import "./RoomList.scss"
 import Carousel from "./Carousel";
 
 const RoomList = ({ data }) => {
+  console.log("Room data:", data);
+
   return (
     <div id="room-list">
-      {data.map((item, index) => {
+      {data?.map((item, index) => {
+        console.log("Room item:", item);
         return (
           <Link
             to={`/rooms/all/${item._id}`}
@@ -15,9 +18,12 @@ const RoomList = ({ data }) => {
           >
             <div className="img-wrapper">
                {/* { <img src={item.img[0]} alt="" /> } */}
-               { <Carousel data={item.img} /> }  
+               { <Carousel data={item.img} /> }
+                 
             </div>
             <p className="name"> {item.name} </p>
+            console.log("Room link:", `/rooms/all/${item._id}`);
+
           </Link>
         );
       })}
