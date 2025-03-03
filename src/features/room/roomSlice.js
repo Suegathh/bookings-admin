@@ -30,9 +30,9 @@ export const createRoom = createAsyncThunk(
         },
         method: "POST",
         body: JSON.stringify(roomData),
-        credentials: "include", // Add this line to include cookies
+        credentials: "include", // Add credentials to include cookies for authentication
       });
-      
+
       if (!res.ok) {
         const error = await res.json();
         return thunkApi.rejectWithValue(error);
@@ -50,7 +50,10 @@ export const createRoom = createAsyncThunk(
 // Get all rooms
 export const getRooms = createAsyncThunk("room/getall", async (_, thunkApi) => {
   try {
-    const res = await fetch(buildUrl(API_URL, 'api/rooms'));
+    const res = await fetch(buildUrl(API_URL, 'api/rooms'), {
+      credentials: "include", // Add credentials to include cookies for authentication
+    });
+    
     if (!res.ok) {
       const error = await res.json();
       return thunkApi.rejectWithValue(error);
@@ -76,7 +79,9 @@ export const updateRoom = createAsyncThunk(
         },
         method: "PUT",
         body: JSON.stringify(rest),
+        credentials: "include", // Add credentials to include cookies for authentication
       });
+      
       const data = await res.json();
       if (!res.ok) {
         return thunkApi.rejectWithValue(data);
@@ -97,7 +102,9 @@ export const deleteRoom = createAsyncThunk(
     try {
       const res = await fetch(buildUrl(API_URL, `api/rooms/${roomId}`), {
         method: "DELETE",
+        credentials: "include", // Add credentials to include cookies for authentication
       });
+      
       const data = await res.json();
       if (!res.ok) {
         return thunkApi.rejectWithValue(data);
