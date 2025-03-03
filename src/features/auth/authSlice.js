@@ -5,7 +5,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 export const registerUser = createAsyncThunk("auth/register", async (userData, thunkApi) => {
     try {
-        const res = await fetch("/api/users", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -29,7 +29,7 @@ export const loginUser = createAsyncThunk(
     "auth/login",
     async (userData, thunkApi) => {
         try {
-            const res = await fetch("/api/users/login", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -56,7 +56,7 @@ export const loginUser = createAsyncThunk(
 // Logout User action
 export const logoutUser = createAsyncThunk("auth/logout", async (_, thunkApi) => {
     try {
-        const res = await fetch("/api/users/logout");
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/logout`);
 
         if (!res.ok) {
             const error = await res.json();
