@@ -10,6 +10,7 @@ import Rooms from "./pages/Rooms"
 import Room from "./pages/Room"
 import EditRoom from "./pages/EditRoom"
 import Booking from "./pages/Booking"
+import RoomList from "./components/RoomList"
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/roomList" element={<RoomList />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
