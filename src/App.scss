@@ -1,0 +1,52 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+a{
+  text-decoration: none;
+  color: #000;
+}
+.container{
+  width: 1200px;
+  max-width: 90%;
+  margin: 0;
+}
+.heading{
+  font-size: 2re,;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  &.center{
+  text-align: center;
+}
+}
+.form-wrapper{
+  width: 540px;
+  max-width: 100%;
+  margin: 0 auto;
+  .input-group{
+    margin-bottom: 1rem;
+    
+  }
+  label{
+    display: block;
+    margin-bottom: 1rem;
+  }
+  input, textarea{
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0rem;
+    text-indent: 10px;
+    font-size: 1rem;
+  }
+  button{
+    display: block;
+    width: 100%;
+    background-color: #000;
+    color: white;
+    padding: 1rem 0rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+}
