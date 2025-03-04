@@ -77,12 +77,12 @@ export const logoutUser = createAsyncThunk(
     "auth/logout",
     async (_, thunkAPI) => {
       try {
-        const logoutUrl = `${API_URL}/api/users/logout`;  // Ensure correct API URL
+        const logoutUrl = `${API_URL}/api/users/logout`;  // Fix API path
         console.log('Attempting logout with URL:', logoutUrl);
   
         const response = await fetch(logoutUrl, {
-          method: "POST",  // Change to POST if required by backend
-          credentials: "include",
+          method: "POST",  // Ensure it matches backend
+          credentials: "include",  // Send cookies
           headers: {
             'Content-Type': 'application/json'
           }
@@ -100,7 +100,7 @@ export const logoutUser = createAsyncThunk(
           return thunkAPI.rejectWithValue(errorText);
         }
   
-        localStorage.removeItem("user"); // Ensure logout is cleared
+        localStorage.removeItem("user"); // Clear user session
         return await response.json();  
       } catch (error) {
         console.error("Comprehensive Logout Error:", error);
@@ -108,6 +108,7 @@ export const logoutUser = createAsyncThunk(
       }
     }
   );
+  
   
 const initialState = {
   user: user ? user : null,
