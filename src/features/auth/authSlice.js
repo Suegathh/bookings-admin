@@ -72,14 +72,15 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, thunkAPI) => {
     try {
-      const logoutUrl = `${API_URL}/api/users/logout`;
-      console.log("Attempting logout:", logoutUrl);
 
-      const response = await fetch(logoutUrl, {
+      const response = await fetch(`${API_URL}/api/users/logout`, {
         method: "POST",
-        credentials: "include", 
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", // ✅ Required to send cookies
+        headers: {
+          "Content-Type": "application/json"
+        }
       });
+      
 
       console.log("Logout Response:", response.status, response.statusText);
 
