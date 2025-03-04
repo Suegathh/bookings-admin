@@ -2,116 +2,104 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
+// Fetch user data from localStorage safely
+const storedUser = localStorage.getItem("user");
+const user = storedUser ? JSON.parse(storedUser) : null;
 
-// Fetch user data from localStorage
-const user = JSON.parse(localStorage.getItem("user")) || null;
-
-// Register User
+// 🚀 Register User
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async (userData, thunkApi) => {
+  async (userData, thunkAPI) => {
     try {
-        const res = await fetch(`${API_URL}/register`, {
-
+      const res = await fetch(`${API_URL}/api/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
-        credentials: "include", // 🔥 Fix: Ensures cookies are sent
+        credentials: "include", 
       });
 
       if (!res.ok) {
         const error = await res.json();
-        return thunkApi.rejectWithValue(error);
+        return thunkAPI.rejectWithValue(error.message || "Registration failed");
       }
 
       return await res.json();
     } catch (error) {
-      return thunkApi.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message || "Something went wrong");
     }
   }
 );
 
-// Login User
+// 🚀 Login User
 export const loginUser = createAsyncThunk(
-    "auth/login",
-    async (userData, thunkApi) => {
-      try {
-        console.log('Login Attempt with Data:', userData);
-        
-        const res = await fetch(`${API_URL}/api/users/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include", // Important for cookies
-          body: JSON.stringify(userData),
-        });
-        
-        console.log('Login Response Status:', res.status);
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error("Login Error Response:", errorText);
-          return thunkApi.rejectWithValue(errorText);
-        }
-        
-        const data = await res.json();
-        console.log('Login Response Data:', data);
-        
-        const userWithToken = {
-          ...data,
-          token: data.token
-        };
-        
-        localStorage.setItem("user", JSON.stringify(userWithToken));
-        
-        return userWithToken;
-      } catch (error) {
-        console.error("Login Catch Error:", error);
-        return thunkApi.rejectWithValue(error.message);
+  "auth/login",
+  async (userData, thunkAPI) => {
+    try {
+      console.log("Login Attempt:", userData);
+      
+      const res = await fetch(`${API_URL}/api/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", 
+        body: JSON.stringify(userData),
+      });
+
+      console.log("Login Response Status:", res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Login Error:", errorText);
+        return thunkAPI.rejectWithValue(errorText || "Login failed");
       }
+
+      const data = await res.json();
+      console.log("Login Response Data:", data);
+
+      // Ensure token is stored properly
+      const userWithToken = { ...data, token: data.token };
+      localStorage.setItem("user", JSON.stringify(userWithToken));
+
+      return userWithToken;
+    } catch (error) {
+      console.error("Login Error:", error);
+      return thunkAPI.rejectWithValue(error.message || "Something went wrong");
     }
-  );
-// Logout User
+  }
+);
+
+// 🚀 Logout User
 export const logoutUser = createAsyncThunk(
-    "auth/logout",
-    async (_, thunkAPI) => {
-      try {
-        const logoutUrl = `${API_URL}/api/users/logout`;  // Fix API path
-        console.log('Attempting logout with URL:', logoutUrl);
-  
-        const response = await fetch(logoutUrl, {
-          method: "POST",  // Ensure it matches backend
-          credentials: "include",  // Send cookies
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-  
-        console.log('Full Logout Response:', {
-          url: response.url,
-          status: response.status,
-          statusText: response.statusText
-        });
-  
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Detailed Logout Error Response:', errorText);
-          return thunkAPI.rejectWithValue(errorText);
-        }
-  
-        localStorage.removeItem("user"); // Clear user session
-        return await response.json();  
-      } catch (error) {
-        console.error("Comprehensive Logout Error:", error);
-        return thunkAPI.rejectWithValue(error.message);
+  "auth/logout",
+  async (_, thunkAPI) => {
+    try {
+      const logoutUrl = `${API_URL}/api/users/logout`;
+      console.log("Attempting logout:", logoutUrl);
+
+      const response = await fetch(logoutUrl, {
+        method: "POST",
+        credentials: "include", 
+        headers: { "Content-Type": "application/json" },
+      });
+
+      console.log("Logout Response:", response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Logout Error:", errorText);
+        return thunkAPI.rejectWithValue(errorText || "Logout failed");
       }
+
+      localStorage.removeItem("user");
+      return { success: true, message: "Logged out successfully" };
+    } catch (error) {
+      console.error("Logout Error:", error);
+      return thunkAPI.rejectWithValue(error.message || "Something went wrong");
     }
-  );
-  
-  
+  }
+);
+
 const initialState = {
-  user: user ? user : null,
+  user: user,
   isLoading: false,
   isSuccess: false,
   isError: false,
@@ -131,6 +119,7 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // 🚀 Register Cases
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -142,8 +131,10 @@ export const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload; // 🔥 Fix: Corrected typo
+        state.message = action.payload;
       })
+
+      // 🚀 Login Cases
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -157,6 +148,8 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
+
+      // 🚀 Logout Cases
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -164,6 +157,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.user = null;
+        state.message = "Logged out successfully";
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false;
