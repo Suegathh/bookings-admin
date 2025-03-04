@@ -35,7 +35,7 @@ const Booking = () => {
           throw new Error("Authentication required. Please log in.");
         }
 
-        const res = await fetch(`${API_URL}/bookings/${id}`, {
+        const res = await fetch(`${API_URL}/api/bookings/${id}`, {
           method: "GET",
           credentials: "include",
           headers: {

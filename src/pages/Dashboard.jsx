@@ -18,6 +18,10 @@ const Dashboard = () => {
     }
   }, [isSuccess, dispatch]);
 
+  useEffect(() => {
+    console.log("Bookings in Dashboard:", bookings);
+  }, [bookings]);
+  
   // Fetch bookings only when user is available
   useEffect(() => {
     if (!user) {
@@ -34,7 +38,16 @@ const Dashboard = () => {
       {isLoading && <p>Loading bookings...</p>}
       {isError && <p className="error">Error: {message}</p>}
 
-      {bookings?.length > 0 ? <BookingList data={bookings} /> : <p>No bookings found.</p>}
+      {bookings?.length > 0 ? (
+  <ul>
+    {bookings.map((booking, index) => (
+      <li key={index}>{booking.hotelName}</li> // Ensure property exists
+          ))}
+        </ul>
+      ) : (
+        <p>No bookings found.</p>
+      )}
+
     </div>
   );
 };

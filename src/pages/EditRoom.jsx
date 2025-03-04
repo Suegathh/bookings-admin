@@ -3,14 +3,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { updateRoom, reset } from "../features/room/roomSlice";
 import { useSelector, useDispatch } from "react-redux";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = "https://your-backend-url.com"; // ✅ Ensure API URL
 
 const EditRoom = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isSuccess } = useSelector((state) => state.room);
   const { id } = useParams();
+
+  const { isSuccess, isLoading, isError, message } = useSelector((state) => state.room);
+
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -20,35 +23,38 @@ const EditRoom = () => {
 
   const { name, price, desc, roomNumbers } = formData;
 
-  // ✅ Fetch Room Data
+  // ✅ Fetch Room Data on Component Mount
   useEffect(() => {
     const getRoom = async () => {
       setLoading(true);
+      setError(null);
+
       try {
         const res = await fetch(`${API_URL}/api/rooms/${id}`, { credentials: "include" });
-        if (!res.ok) {
-          throw new Error("Failed to fetch room data");
-        }
+        if (!res.ok) throw new Error(`Failed to fetch room data: ${res.status}`);
+
         const data = await res.json();
 
-        // ✅ Convert roomNumbers array to comma-separated string
-        const roomString = data.roomNumbers.map((item) => item.number).join(",");
+        // ✅ Convert roomNumbers array to a comma-separated string safely
+        const roomString = (data.roomNumbers || []).map((item) => item.number).join(", ");
 
         setFormData({
-          name: data.name,
-          price: data.price,
+          name: data.name || "",
+          price: data.price || "",
           desc: data.desc || "",
           roomNumbers: roomString,
         });
       } catch (error) {
-        console.error(error);
+        console.error("Fetch Error:", error.message);
+        setError(error.message);
       }
       setLoading(false);
     };
-    getRoom();
-  }, [id]); // ✅ Dependency added
 
-  // ✅ Handle Navigation After Update
+    getRoom();
+  }, [id]);
+
+  // ✅ Redirect on Successful Update
   useEffect(() => {
     if (isSuccess) {
       dispatch(reset());
@@ -65,24 +71,27 @@ const EditRoom = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !price || !roomNumbers) {
+
+    if (!name.trim() || !price || !roomNumbers.trim()) {
+      alert("Please fill in all required fields.");
       return;
     }
 
+    // ✅ Convert roomNumbers string to an array of objects
     const roomArray = roomNumbers
       .split(",")
-      .map((item) => {
-        const num = parseInt(item.trim(), 10);
-        return isNaN(num) ? null : { number: num, unavailableDates: [] };
+      .map((num) => {
+        const parsedNum = parseInt(num.trim(), 10);
+        return !isNaN(parsedNum) ? { number: parsedNum, unavailableDates: [] } : null;
       })
-      .filter((item) => item !== null); // ✅ Remove invalid numbers
+      .filter(Boolean); // ✅ Remove null values
 
     const dataToSubmit = {
       name,
       price: parseFloat(price),
       desc,
       roomNumbers: roomArray,
-      roomId: id,
+      roomId: id, // ✅ Ensure `id` is sent
     };
 
     dispatch(updateRoom(dataToSubmit));
@@ -95,6 +104,8 @@ const EditRoom = () => {
       <div className="form-wrapper">
         {loading ? (
           <p>Loading room details...</p>
+        ) : error ? (
+          <p className="error">{error}</p>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="input-group">
@@ -132,12 +143,14 @@ const EditRoom = () => {
                 name="roomNumbers"
                 onChange={handleChange}
                 value={roomNumbers}
-                placeholder="Enter room numbers separated by commas e.g. 202, 203, 204"
+                placeholder="Enter room numbers separated by commas (e.g. 202, 203, 204)"
                 required
               ></textarea>
             </div>
 
-            <button type="submit">Submit</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Submit"}
+            </button>
           </form>
         )}
       </div>
