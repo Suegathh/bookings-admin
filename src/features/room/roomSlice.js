@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL ="http://localhost:5000"; // ✅ Use .env variable
+const API_URL =process.env.REACT_APP_API_URL; ; // ✅ Use .env variable
 
 const initialState = {
   rooms: [],
