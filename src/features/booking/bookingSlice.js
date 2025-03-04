@@ -15,7 +15,7 @@ export const createBooking = createAsyncThunk(
   "booking/create",
   async (bookingData, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/api//bookings`, {
+      const res = await fetch(`${API_URL}/bookings`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -37,7 +37,20 @@ export const getBookings = createAsyncThunk(
   "booking/getbookings",
   async (_, thunkApi) => {
     try {
-      const res = await fetch("/api/bookings");
+      const token = localStorage.getItem("token"); // Get token from local storage
+      if (!token) {
+        return thunkApi.rejectWithValue("No token found, please log in.");
+      }
+
+      const res = await fetch(`${API_URL}/bookings`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        credentials: "include", // Send cookies if needed
+      });
+
       const data = await res.json();
       if (!res.ok) {
         return thunkApi.rejectWithValue(data);
