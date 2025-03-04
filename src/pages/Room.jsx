@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteRoom, reset } from "../features/room/roomSlice";
 import Carousel from "../components/Carousel";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Room = () => {
   const { user } = useSelector((state) => state.auth);
   const { isSuccess } = useSelector((state) => state.room);
@@ -12,30 +14,40 @@ const Room = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ Loading state
 
+  // ✅ Handle Navigation After Room Deletion
   useEffect(() => {
     if (isSuccess) {
-      // navigate to rooms
       navigate("/rooms");
-      // disptach reset
       dispatch(reset());
     }
-  }, [isSuccess]);
+  }, [isSuccess, dispatch, navigate]);
+
+  // ✅ Fetch Room Details
   useEffect(() => {
     const getRoom = async () => {
+      setLoading(true);
       try {
-        const res = await fetch(`/api/rooms/${id}`);
+        const res = await fetch(`${API_URL}/api/rooms/${id}`, {
+          credentials: "include",
+        });
 
         if (res.ok) {
           const data = await res.json();
           setRoom(data);
+        } else {
+          console.error("Failed to fetch room data");
         }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching room:", error);
       }
+      setLoading(false);
     };
+
     getRoom();
-  }, []);
+  }, [id]); // ✅ Dependency Array
+
   const handleDelete = () => {
     dispatch(deleteRoom(id));
   };
@@ -43,12 +55,12 @@ const Room = () => {
   return (
     <div id="room">
       <div className="container">
-        {room ? (
+        {loading ? (
+          <p>Loading room details...</p>
+        ) : room ? (
           <div>
             <div className="img-wrapper">
               <Carousel data={room.img} />
-
-              {/* <img src={room.img[0]} alt="" /> */}
             </div>
             <div className="text-wrapper">
               <h1 className="heading center"> {room.name} </h1>
@@ -56,14 +68,16 @@ const Room = () => {
               <h2> ${room.price.toFixed(2)} </h2>
             </div>
 
-            {user && user.isAdmin ? (
+            {user && user.isAdmin && (
               <div className="cta-wrapper">
                 <Link to={`/edit/rooms/${room._id}`}>Edit Room</Link>
                 <button onClick={handleDelete}>Delete Room</button>
               </div>
-            ) : null}
+            )}
           </div>
-        ) : null}
+        ) : (
+          <p>Room not found.</p>
+        )}
       </div>
     </div>
   );
