@@ -9,11 +9,13 @@ const initialState = {
   message: "",
 };
 
+const API_URL = "https://booking-backend-bice.vercel.app"
+
 export const createBooking = createAsyncThunk(
   "booking/create",
   async (bookingData, thunkApi) => {
     try {
-      const res = await fetch(`/api/bookings`, {
+      const res = await fetch(`${API_URL}/api//bookings`, {
         headers: {
           "Content-Type": "application/json",
         },
