@@ -77,7 +77,7 @@ export const logoutUser = createAsyncThunk(
     "auth/logout",
     async (_, thunkAPI) => {
       try {
-        const logoutUrl = `${API_URL}/users/logout`;  // Ensure correct API URL
+        const logoutUrl = `${API_URL}/api/users/logout`;  // Ensure correct API URL
         console.log('Attempting logout with URL:', logoutUrl);
   
         const response = await fetch(logoutUrl, {
