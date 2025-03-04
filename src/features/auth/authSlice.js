@@ -36,16 +36,19 @@ export const loginUser = createAsyncThunk(
     "auth/login",
     async (userData, thunkApi) => {
       try {
+        console.log('Login Attempt with Data:', userData);
+        
         const res = await fetch(`${API_URL}/users/login`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json" 
+          },
           credentials: "include", // Important for cookies
           body: JSON.stringify(userData),
         });
    
         console.log('Login Response Status:', res.status);
-        console.log('Login Response Headers:', res.headers);
-
+        
         if (!res.ok) {
           const errorText = await res.text();
           console.error("Login Error Response:", errorText);
@@ -53,14 +56,13 @@ export const loginUser = createAsyncThunk(
         }
    
         const data = await res.json();
+        console.log('Login Response Data:', data);
         
-        // Ensure token is included
         const userWithToken = {
           ...data,
-          token: data.token // From the backend response
+          token: data.token
         };
    
-        // Store in localStorage
         localStorage.setItem("user", JSON.stringify(userWithToken));
    
         return userWithToken;
