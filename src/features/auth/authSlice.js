@@ -70,28 +70,30 @@ export const loginUser = createAsyncThunk(
   );
 // Logout User
 export const logoutUser = createAsyncThunk(
-  "auth/logout",
-  async (_, thunkApi) => {
-    try {
-        const res = await fetch(`${API_URL}/logout`, {
-
-        method: "GET",
-        credentials: "include", // 🔥 Fix: Ensures cookies are sent
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        return thunkApi.rejectWithValue(error);
+    "auth/logout",
+    async (_, thunkAPI) => {
+      try {
+        const response = await fetch(`${API_URL}/logout`, {
+          method: "GET",
+          credentials: "include", // Critical for cookie handling
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          return thunkAPI.rejectWithValue(errorData);
+        }
+  
+        localStorage.removeItem("user");
+        return await response.json();
+      } catch (error) {
+        console.error("Logout Error:", error);
+        return thunkAPI.rejectWithValue(error.message);
       }
-
-      localStorage.removeItem("user"); // Remove user from localStorage
-      return await res.json();
-    } catch (error) {
-      return thunkApi.rejectWithValue(error.message);
     }
-  }
-);
-
+  );
 const initialState = {
   user: user ? user : null,
   isLoading: false,
