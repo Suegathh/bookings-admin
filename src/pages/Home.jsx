@@ -3,7 +3,7 @@ const Home = () => {
   return (
     <div id="home">
       <div className="img-wra">
-        <img src="/images/hotel1.jpeg" alt="Hotel" />
+        <img src="/images/landing-1.jpeg" alt="" />
       </div>
     </div>
   );

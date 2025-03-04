@@ -5,148 +5,150 @@ import { uploadImage } from "../Utilis";
 import { createRoom, reset } from "../features/room/roomSlice"
 
 const CreateRoom = () => {
-    const dispatch = useDispatch()
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+  
     const { user } = useSelector((state) => state.auth);
-    const {isSuccess} = useSelector((state) => state.room)
-    
-    // Form state
+    const { isSuccess } = useSelector((state) => state.room);
+  
+    const [files, setFiles] = useState("");
     const [formData, setFormData] = useState({
-        name: "test",
-        price: "200",
-        desc: "fxfgctftg",
-        roomNumbers: "401, 205, 39,123",
+      name: "test",
+      price: 200,
+      desc: "dafdafadfa",
+      roomNumbers: "401, 203, 232, 234",
     });
-
-    const [files, setFiles] = useState(null); // File state
-
+  
     const { name, price, desc, roomNumbers } = formData;
-
+  
     useEffect(() => {
-        if (!user) {
-            navigate("/login");
-        }
-    }, [user, navigate]);
-
-    useEffect(() => {
-      if(isSuccess){
-        dispatch(reset())
-        navigate("/rooms")
+      if (!user) {
+        // navigate to login
+        navigate("/login");
       }
-    })
-
-    // Handle text input changes
+    }, [user]);
+  
+    useEffect(() => {
+      if (isSuccess) {
+        dispatch(reset());
+        navigate("/rooms");
+      }
+    }, [isSuccess]);
+  
     const handleChange = (e) => {
-        setFormData( prevState => ({
-            ...prevState,
-            [e.target.name]: e.target.value,
-        }));
+      setFormData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
     };
-
-    // Handle file input changes
+  
+    // handle File change
     const handleFileChange = (e) => {
-        setFiles(e.target.files); 
+      setFiles(e.target.files);
     };
-
-    // Handle form submission
+    console.log("Current User:", user);
+  
     const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      if (!name || !price || !roomNumbers) {
-        return;
-      }
-  
-      const roomArray = roomNumbers.split(",").map((item) => {
-        return {
-          number: parseInt(item),
+        e.preventDefault();
+      
+        if (!name || !price || !roomNumbers) {
+          // Add some error handling or toast notification
+          return;
+        }
+      
+        const roomArray = roomNumbers.split(",").map((item) => ({
+          number: parseInt(item.trim()),
           unavailableDates: [],
-        };
-      });
-  
-      let list = [];
-      list = await Promise.all(
-        Object.values(files).map(async (file) => {
-          const url = await uploadImage(file);
-          return url;
-        })
-      );
-     
-      const dataToSubmit = {
-        name,
-        price,
-        desc,
-        roomNumbers: roomArray,
-        img: list,
+        }));
+      
+        try {
+          // Move dataToSubmit inside the try block
+          const list = await Promise.all(
+            Object.values(files).map(async (file) => {
+              const url = await uploadImage(file);
+              return url;
+            })
+          );
+      
+          const dataToSubmit = {
+            name,
+            price: Number(price), // Ensure price is a number
+            desc,
+            roomNumbers: roomArray,
+            img: list,
+          };
+      
+          // Add error handling for dispatch
+          const response = await dispatch(createRoom(dataToSubmit)).unwrap();
+          console.log("Room created successfully:", response);
+        } catch (error) {
+          console.error("Room Creation Error:", error);
+          // Optionally show error to user
+        }
       };
-      dispatch(createRoom(dataToSubmit))
-  
-    };
-
   
     return (
-        <div className="container">
-            <h1 className="heading center">Create Room</h1>
-            <div className="form-wrapper">
-
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group">
-                        <label htmlFor="name">Name</label>
-                        <input 
-                            type="text" 
-                            name="name" 
-                            placeholder="Enter room name" 
-                            value={name} 
-                            onChange={handleChange} 
-                        />
-                    </div>
-
-                    <div className="input-group">
-                        <label htmlFor="price">Price</label>
-                        <input 
-                            type="text" 
-                            name="price" 
-                            placeholder="Enter room price" 
-                            value={price} 
-                            onChange={handleChange} 
-                        />
-                    </div>
-
-                    <div className="input-group">
-                        <label htmlFor="desc">Description</label>
-                        <textarea 
-                            name="desc" 
-                            placeholder="Enter room description"
-                            onChange={handleChange} 
-                            value={desc} 
-                        ></textarea>
-                    </div>
-
-                    <div className="input-group">
-                        <label htmlFor="roomNumbers">Room Numbers</label>
-                        <textarea 
-                            name="roomNumbers" 
-                            placeholder="Enter room numbers, separated by commas"
-                            onChange={handleChange} 
-                            value={roomNumbers} 
-                          
-                        ></textarea>
-                    </div>
-
-                    <div className="input-group">
-                        <label htmlFor="images">Images</label>
-                        <input 
-                            type="file" 
-                            name="file" 
-                            multiple 
-                            onChange={handleFileChange} 
-                        />
-                    </div>
-
-                    <button type="submit">Create Room</button>
-                </form>
+      <div className="container">
+        <h1 className="heading center">Create Room</h1>
+  
+        <div className="form-wrapper">
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="name">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={name}
+                placeholder="Enter room name"
+                onChange={handleChange}
+              />
             </div>
+  
+            <div className="input-group">
+              <label htmlFor="price">Price</label>
+              <input
+                type="text"
+                name="price"
+                value={price}
+                placeholder="Enter room name"
+                onChange={handleChange}
+              />
+            </div>
+  
+            <div className="input-group">
+              <label htmlFor="desc">Description</label>
+              <textarea
+                name="desc"
+                onChange={handleChange}
+                value={desc}
+              ></textarea>
+            </div>
+  
+            <div className="input-group">
+              <label htmlFor="desc">Room Numbers</label>
+              <textarea
+                name="roomNumbers"
+                onChange={handleChange}
+                value={roomNumbers}
+                placeholder="enter room numbers seperated by commas eg: 202, 203, 204, 400"
+              ></textarea>
+            </div>
+  
+            <div className="input-group">
+              <label htmlFor="name">Images</label>
+              <input
+                type="file"
+                name="file"
+                multiple
+                onChange={handleFileChange}
+              />
+            </div>
+  
+            <button type="submit">Submit</button>
+          </form>
         </div>
+      </div>
     );
-};
-
-export default CreateRoom;
+  };
+  
+  export default CreateRoom;

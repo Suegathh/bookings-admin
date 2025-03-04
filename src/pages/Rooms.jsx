@@ -2,6 +2,7 @@ import { getRooms, reset } from "../features/room/roomSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import RoomList from "../components/RoomList";
+
 const Rooms = () => {
   const dispatch = useDispatch();
   const { rooms, isLoading, isSuccess } = useSelector((state) => state.room);

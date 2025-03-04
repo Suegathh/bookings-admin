@@ -20,41 +20,26 @@ const EditRoom = () => {
   useEffect(() => {
     const getRoom = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/rooms/${id}`);
-        
-
+        const res = await fetch(`/api/rooms/${id}`);
         const data = await res.json();
-  
-        
-  
-        const { roomNumbers = [], ...rest } = data; // Default to an empty array if roomNumbers is undefined
-  
-        if (Array.isArray(roomNumbers)) {
-          const roomMap = roomNumbers.map((item) => item.number);
-          const roomString = roomMap.join(",");
-          setFormData({
-            ...rest,
-            roomNumbers: roomString,
-          });
-        } else {
-          setFormData({
-            ...rest,
-            roomNumbers: "", 
-          });
-          console.error("roomNumbers is not an array");
-        }
+
+        const { roomNumbers, ...rest } = data;
+        const roomMap = roomNumbers.map((item) => item.number);
+        const roomString = roomMap.join(",");
+        setFormData({
+          ...rest,
+          roomNumbers: roomString,
+        });
       } catch (error) {
         console.log(error);
       }
     };
     getRoom();
-  }, [id]);
-  
-  
-  
+  }, []);
 
   useEffect(() => {
     if (isSuccess) {
+      // navigate to rooms
       dispatch(reset());
       navigate("/rooms");
     }
@@ -137,7 +122,7 @@ const EditRoom = () => {
             ></textarea>
           </div>
 
-          <button type="submit">Edit</button>
+          <button type="submit">Submit</button>
         </form>
       </div>
     </div>

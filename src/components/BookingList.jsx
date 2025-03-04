@@ -1,43 +1,39 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import "./BookingList.scss"; // Import the CSS file for styling
+import "./BookingList.scss";
 
-const BookingList = ({ data }) => {
-  // Sample data for demonstration
-
-  // Function to handle actions (e.g., edit, delete)
-  const handleAction = (id, action) => {
-    // Implement action logic here
-    console.log(`${action} user with ID ${id}`);
-  };
-
+const BookingList = ({ data = [] }) => {
   return (
     <div className="container">
       <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Room</th>
-              <th>Confirmed</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item) => (
-              <tr key={item._id}>
-                <td>{item.name}</td>
-                <td>{item.email}</td>
-                <td>{item.roomId ? item.roomId.name : "No Room"}</td>
-                <td>{item.confirmed ? "Yes" : "No"}</td>
-                <td>
-                  <Link to={`/bookings/${item._id}`}> View</Link>
-                </td>
+        {data.length === 0 ? (
+          <p>No bookings found</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Room</th>
+                <th>Confirmed</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item._id}>
+                  <td>{item.name || 'N/A'}</td>
+                  <td>{item.email || 'N/A'}</td>
+                  <td>{item.roomId?.name || 'Unknown Room'}</td>
+                  <td>{item.confirmed ? "Yes" : "No"}</td>
+                  <td>
+                    <Link to={`/bookings/${item._id}`}>View</Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
