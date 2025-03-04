@@ -73,23 +73,27 @@ export const logoutUser = createAsyncThunk(
     "auth/logout",
     async (_, thunkAPI) => {
       try {
-        const response = await fetch(`${API_URL}/logout`, {
+        const response = await fetch(`${API_URL}/users/logout`, { // Note the /users/
           method: "GET",
-          credentials: "include", // Critical for cookie handling
+          credentials: "include",
           headers: {
             'Content-Type': 'application/json'
           }
         });
   
+        console.log('Logout Response Status:', response.status);
+  
         if (!response.ok) {
-          const errorData = await response.json();
-          return thunkAPI.rejectWithValue(errorData);
+          const errorText = await response.text();
+          console.error('Logout Error Response:', errorText);
+          return thunkAPI.rejectWithValue(errorText);
         }
   
+        const responseData = await response.json();
         localStorage.removeItem("user");
-        return await response.json();
+        return responseData;
       } catch (error) {
-        console.error("Logout Error:", error);
+        console.error("Detailed Logout Error:", error);
         return thunkAPI.rejectWithValue(error.message);
       }
     }
