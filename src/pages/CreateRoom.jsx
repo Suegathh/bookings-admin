@@ -51,8 +51,14 @@ const CreateRoom = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
       
+        if (!user || !user.token) {
+          console.error("User not authenticated. Redirecting to login...");
+          navigate("/login");  // Redirect to login if no user is found
+          return;
+        }
+      
         if (!name || !price || !roomNumbers) {
-          // Add some error handling or toast notification
+          console.error("Missing required fields");
           return;
         }
       
@@ -62,7 +68,6 @@ const CreateRoom = () => {
         }));
       
         try {
-          // Move dataToSubmit inside the try block
           const list = await Promise.all(
             Object.values(files).map(async (file) => {
               const url = await uploadImage(file);
@@ -72,20 +77,20 @@ const CreateRoom = () => {
       
           const dataToSubmit = {
             name,
-            price: Number(price), // Ensure price is a number
+            price: Number(price),
             desc,
             roomNumbers: roomArray,
             img: list,
+            token: user.token, // ✅ Ensure token is included
           };
       
-          // Add error handling for dispatch
           const response = await dispatch(createRoom(dataToSubmit)).unwrap();
           console.log("Room created successfully:", response);
         } catch (error) {
           console.error("Room Creation Error:", error);
-          // Optionally show error to user
         }
       };
+      
   
     return (
       <div className="container">
