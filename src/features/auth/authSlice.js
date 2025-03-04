@@ -36,20 +36,22 @@ export const loginUser = createAsyncThunk(
     "auth/login",
     async (userData, thunkApi) => {
       try {
-        const res = await fetch(`${API_URL}/login`, {
-
+        const res = await fetch(`${API_URL}/users/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include", // Important for cookies
           body: JSON.stringify(userData),
         });
-  
+   
+        console.log('Login Response Status:', res.status);
+        console.log('Login Response Headers:', res.headers);
+
         if (!res.ok) {
-          const error = await res.json();
-          console.error("Login Error:", error);
-          return thunkApi.rejectWithValue(error);
+          const errorText = await res.text();
+          console.error("Login Error Response:", errorText);
+          return thunkApi.rejectWithValue(errorText);
         }
-  
+   
         const data = await res.json();
         
         // Ensure token is included
@@ -57,10 +59,10 @@ export const loginUser = createAsyncThunk(
           ...data,
           token: data.token // From the backend response
         };
-  
+   
         // Store in localStorage
         localStorage.setItem("user", JSON.stringify(userWithToken));
-  
+   
         return userWithToken;
       } catch (error) {
         console.error("Login Catch Error:", error);
