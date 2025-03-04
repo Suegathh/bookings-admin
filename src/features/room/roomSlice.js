@@ -25,31 +25,33 @@ const handleFetchError = async (response, thunkApi) => {
 // Create room
 // Create room
 export const createRoom = createAsyncThunk(
-  "room/create", 
-  async (roomData, thunkApi) => {
+  "rooms/create",
+  async (roomData, thunkAPI) => {
     try {
-      const res = await fetch(`${API_URL}/api/rooms`, {
+      // Remove token from body before sending
+      const { token, ...dataToSend } = roomData;
+
+      const response = await fetch(`${API_URL}/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : ''}`,
+          "Authorization": `Bearer ${token}`
         },
         credentials: "include",
-        body: JSON.stringify(roomData),
+        body: JSON.stringify(dataToSend)
       });
 
-      if (!res.ok) {
-        return handleFetchError(res, thunkApi);
+      if (!response.ok) {
+        const errorData = await response.json();
+        return thunkAPI.rejectWithValue(errorData);
       }
 
-      return await res.json();
+      return await response.json();
     } catch (error) {
-      console.error("Room Creation Error:", error);
-      return thunkApi.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
-
 // Get all rooms
 export const getRooms = createAsyncThunk(
   "room/getall", 
