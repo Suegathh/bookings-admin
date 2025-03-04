@@ -31,7 +31,7 @@ export const createRoom = createAsyncThunk(
       // Remove token from body before sending
       const { token, ...dataToSend } = roomData;
 
-      const response = await fetch(`${API_URL}/rooms`, {
+      const response = await fetch(`${API_URL}/api/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
