@@ -9,7 +9,20 @@ const initialState = {
   isError: false,
   message: "",
 };
+// Generic error handler
+const handleFetchError = async (response, thunkApi) => {
+  let errorMessage = "An unknown error occurred";
+  try {
+    const errorData = await response.text();
+    errorMessage = errorData || `HTTP error! status: ${response.status}`;
+  } catch (e) {
+    console.error("Error parsing error response", e);
+  }
+  console.error("API Error:", errorMessage);
+  return thunkApi.rejectWithValue(errorMessage);
+};
 
+// Create room
 // Create room
 export const createRoom = createAsyncThunk(
   "room/create", 
@@ -19,17 +32,14 @@ export const createRoom = createAsyncThunk(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Add both Authorization header and use credentials
           "Authorization": `Bearer ${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : ''}`,
         },
-        credentials: "include", // Keep for cookie-based auth
+        credentials: "include",
         body: JSON.stringify(roomData),
       });
 
       if (!res.ok) {
-        const errorData = await res.text();
-        console.error("Server Error:", errorData);
-        return thunkApi.rejectWithValue(errorData);
+        return handleFetchError(res, thunkApi);
       }
 
       return await res.json();
@@ -39,20 +49,29 @@ export const createRoom = createAsyncThunk(
     }
   }
 );
-// Get all rooms
-export const getRooms = createAsyncThunk("room/getall", async (_, thunkApi) => {
-  try {
-    const res = await fetch(`${API_URL}/api/rooms`, { credentials: "include" });
 
-    if (!res.ok) {
-      const error = await res.json();
-      return thunkApi.rejectWithValue(error);
+// Get all rooms
+export const getRooms = createAsyncThunk(
+  "room/getall", 
+  async (_, thunkApi) => {
+    try {
+      const res = await fetch(`${API_URL}/api/rooms`, { 
+        credentials: "include",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : ''}`
+        }
+      });
+
+      if (!res.ok) {
+        return handleFetchError(res, thunkApi);
+      }
+      return await res.json();
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
     }
-    return await res.json();
-  } catch (error) {
-    return thunkApi.rejectWithValue(error.message);
   }
-});
+);
+
 
 // Update room
 export const updateRoom = createAsyncThunk("room/update", async (roomData, thunkApi) => {
