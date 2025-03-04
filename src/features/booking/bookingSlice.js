@@ -9,23 +9,29 @@ const initialState = {
   message: "",
 };
 
-const API_URL = "https://booking-backend-bice.vercel.app"
+const API_URL = "https://booking-backend-bice.vercel.app/api/bookings";
+
+// Helper function to get token
+const getToken = () => localStorage.getItem("token");
 
 export const createBooking = createAsyncThunk(
   "booking/create",
   async (bookingData, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/bookings`, {
+      const token = getToken();
+      if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
+
+      const res = await fetch(`${API_URL}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        method: "POST",
         body: JSON.stringify(bookingData),
       });
+      
       const data = await res.json();
-      if (!res.ok) {
-        return thunkApi.rejectWithValue(data);
-      }
+      if (!res.ok) return thunkApi.rejectWithValue(data);
 
       return data;
     } catch (error) {
@@ -33,28 +39,25 @@ export const createBooking = createAsyncThunk(
     }
   }
 );
+
 export const getBookings = createAsyncThunk(
   "booking/getbookings",
   async (_, thunkApi) => {
     try {
-      const token = localStorage.getItem("token"); // Get token from local storage
-      if (!token) {
-        return thunkApi.rejectWithValue("No token found, please log in.");
-      }
+      const token = getToken();
+      if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      const res = await fetch(`${API_URL}/bookings`, {
+      const res = await fetch(`${API_URL}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        credentials: "include", // Send cookies if needed
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        return thunkApi.rejectWithValue(data);
-      }
+      if (!res.ok) return thunkApi.rejectWithValue(data);
+
       return data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
@@ -66,20 +69,22 @@ export const deleteBooking = createAsyncThunk(
   "booking/delete",
   async (id, thunkApi) => {
     try {
-      const res = await fetch(`/api/bookings/${id}`, {
-        headers: {
-          "Content-type": "application/json",
-        },
+      const token = getToken();
+      if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
+
+      const res = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       const data = await res.json();
-      if (!res.ok) {
-        return thunkApi.rejectWithValue(data);
-      }
+      if (!res.ok) return thunkApi.rejectWithValue(data);
 
       return data;
     } catch (error) {
-      console.log(error.message);
       return thunkApi.rejectWithValue(error.message);
     }
   }
@@ -89,17 +94,21 @@ export const confirmBooking = createAsyncThunk(
   "booking/confirm",
   async (bookingId, thunkApi) => {
     try {
-      const res = await fetch(`/api/bookings/${bookingId}`, {
+      const token = getToken();
+      if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
+
+      const res = await fetch(`${API_URL}/${bookingId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        method: "PUT",
         body: JSON.stringify({ confirmed: true }),
       });
+
       const data = await res.json();
-      if (!res.ok) {
-        return thunkApi.rejectWithValue(data);
-      }
+      if (!res.ok) return thunkApi.rejectWithValue(data);
+
       return data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
@@ -107,7 +116,6 @@ export const confirmBooking = createAsyncThunk(
   }
 );
 
-// booking slice
 export const bookingSlice = createSlice({
   name: "booking",
   initialState,
@@ -154,7 +162,7 @@ export const bookingSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.bookings = state.bookings.filter(
-          (booking) => booking._id.toString() !== action.payload.id
+          (booking) => booking._id !== action.payload.id
         );
       })
       .addCase(deleteBooking.rejected, (state, action) => {
@@ -162,7 +170,7 @@ export const bookingSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(confirmBooking.pending, (state, action) => {
+      .addCase(confirmBooking.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(confirmBooking.fulfilled, (state, action) => {
@@ -179,5 +187,4 @@ export const bookingSlice = createSlice({
 });
 
 export const { reset } = bookingSlice.actions;
-
 export default bookingSlice.reducer;

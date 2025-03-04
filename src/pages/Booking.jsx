@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { confirmBooking, deleteBooking, reset } from "../features/booking/bookingSlice";
 import { useDispatch, useSelector } from "react-redux";
 
+const API_URL = "https://booking-backend-bice.vercel.app";
+
 const Booking = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -18,47 +20,63 @@ const Booking = () => {
       dispatch(reset());
       navigate("/dashboard");
     }
-  }, [isSuccess]); // Keep only necessary dependencies
+  }, [isSuccess, dispatch, navigate]); // Fixed dependencies
 
   useEffect(() => {
     dispatch(reset());
 
     const controller = new AbortController();
+    const signal = controller.signal;
+
     const getBooking = async () => {
       try {
-        const res = await fetch(`/api/bookings/${id}`, {
+        const token = localStorage.getItem("token"); // Get token from storage
+        if (!token) {
+          throw new Error("Authentication required. Please log in.");
+        }
+
+        const res = await fetch(`${API_URL}/bookings/${id}`, {
           method: "GET",
-          credentials: "include", // Send cookies
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
+          signal,
         });
-    
+
         if (!res.ok) {
-          throw new Error(`HTTP Error! Status: ${res.status}`);
+          const errorData = await res.json();
+          throw new Error(errorData.message || `HTTP Error! Status: ${res.status}`);
         }
-    
+
         const data = await res.json();
         setBooking(data);
       } catch (error) {
-        console.error("Fetch error:", error.message);
-        setError(error.message);
+        if (error.name !== "AbortError") {
+          console.error("Fetch error:", error.message);
+          setError(error.message);
+        }
       }
     };
-    
 
     getBooking();
-    return () => controller.abort(); // Cleanup fetch on unmount
-  }, [id]); // Depend on id to refetch when it changes
+    return () => controller.abort();
+  }, [id, dispatch]);
 
-  const handleDelete = () => dispatch(deleteBooking(id));
-  const handleConfirm = () => dispatch(confirmBooking(id));
+  const handleDelete = () => {
+    dispatch(deleteBooking(id));
+  };
+
+  const handleConfirm = () => {
+    dispatch(confirmBooking(id));
+  };
 
   return (
     <div id="booking">
       <h1 className="heading center">Booking</h1>
 
-      {error && <p className="error">{error}</p>} {/* Display error if fetching fails */}
+      {error && <p className="error">{error}</p>}
 
       {booking ? (
         <div className="content-wrapper">
