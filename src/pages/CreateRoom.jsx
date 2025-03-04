@@ -51,6 +51,11 @@ const CreateRoom = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
       
+        if (!user || !user.token) {
+          console.error("User not authenticated. Redirecting to login...");
+          navigate("/login");  // Redirect to login if no user is found
+          return;
+        }
       
         if (!name || !price || !roomNumbers) {
           console.error("Missing required fields");
