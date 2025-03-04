@@ -10,7 +10,8 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}`, {
+        const res = await fetch(`${API_URL}/register`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
@@ -35,6 +36,7 @@ export const loginUser = createAsyncThunk(
     async (userData, thunkApi) => {
       try {
         const res = await fetch(`${API_URL}/login`, {
+
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include", // Important for cookies
@@ -70,7 +72,8 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/logout`, {
+        const res = await fetch(`${API_URL}/logout`, {
+
         method: "GET",
         credentials: "include", // 🔥 Fix: Ensures cookies are sent
       });

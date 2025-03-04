@@ -79,11 +79,14 @@ export const updateRoom = createAsyncThunk("room/update", async (roomData, thunk
     const { roomId, ...rest } = roomData;
     const res = await fetch(`${API_URL}/api/rooms/${roomId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : ''}`,
+      },
       credentials: "include",
       body: JSON.stringify(rest),
     });
-
+    
     if (!res.ok) {
       const error = await res.json();
       return thunkApi.rejectWithValue(error);
@@ -100,8 +103,12 @@ export const deleteRoom = createAsyncThunk("room/delete", async (roomId, thunkAp
   try {
     const res = await fetch(`${API_URL}/api/rooms/${roomId}`, {
       method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).token : ''}`,
+      },
       credentials: "include",
     });
+    
 
     if (!res.ok) {
       const error = await res.json();
