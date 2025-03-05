@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { updateRoom, reset } from "../features/room/roomSlice";
 import { useSelector, useDispatch } from "react-redux";
 
-const API_URL = "https://your-backend-url.com"; // ✅ Ensure API URL
+const API_URL = "https://booking-backend-bice.vercel.app"; // ✅ Ensure API URL
 
 const EditRoom = () => {
   const dispatch = useDispatch();
