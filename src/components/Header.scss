@@ -1,101 +1,112 @@
-$primary-color: #8BC34A; // Lighter main color
-$secondary-color: #f95252; // Secondary color (white)
-$hover-color: #7CB342; // Hover effect color
-$font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
 .main-header {
-  background-color: $primary-color;
-  color: $secondary-color;
-  padding: 15px 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 250px; // Adjust the height as needed
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 
-  .container {
+    .header-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1; // Send image to back
+      animation: fadeIn 2s ease-in-out;
+    }
+  
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(225, 199, 199, 0.5); // Adds a dark overlay for readability
+    }
+  }
+  
+.container {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    .logo {
-      font-size: 1.8rem;
-      text-decoration: none;
-      color: $secondary-color;
-      font-family: $font-stack;
-      font-weight: bold;
-      transition: color 0.3s, transform 0.3s;
-
-      &:hover {
-        color: $hover-color;
-        transform: scale(1.1); // Add a slight zoom effect on hover
-      }
-    }
-
-    nav {
-      display: flex;
-      gap: 25px;
-
-      a {
-        text-decoration: none;
-        color: $secondary-color;
-        font-size: 1rem;
-        font-family: $font-stack;
-        transition: color 0.3s, transform 0.3s;
-
-        &:hover {
-          color: $hover-color;
-          transform: translateY(-2px); // Add a slight lift effect on hover
-        }
-      }
-
-      button {
-        background: none;
-        border: 2px solid $secondary-color;
-        color: $secondary-color;
-        cursor: pointer;
-        font-size: 1rem;
-        padding: 5px 15px;
-        font-family: $font-stack;
-        transition: all 0.3s, transform 0.3s;
-
-        &:hover {
-          background-color: $hover-color;
-          border-color: $hover-color;
-          transform: translateY(-2px); // Add a slight lift effect on hover
-        }
-      }
-    }
-  }
+    width: 90%;
+    max-width: 1200px;
+    color: white;
+    z-index: 2; // Ensure content appears above overlay
+}
+  
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    animation: slideIn 1s ease-in-out;
+}
+  
+nav {
+    display: flex;
+    gap: 20px;
 }
 
-// Media queries for responsiveness
-// For tablets and smaller devices
-@media (max-width: 768px) {
-  .main-header {
-    .container {
-      flex-direction: column;
-      text-align: center;
-
-      nav {
-        flex-direction: column;
-        gap: 15px;
-      }
+nav a {
+    color: rgb(21, 20, 20);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s ease-in-out;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+  
+nav a:hover {
+    color: #ffd700; // Golden color on hover
+}
+  
+button {
+    background: transparent;
+    border-radius: 5px;
+    border: none;
+    color: rgb(82, 36, 36);
+    padding: 8px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    animation: fadeInUp 0.5s ease-in-out;
+}
+  
+button:hover {
+    background: white;
+    color: black;
+}
+  
+@keyframes fadeIn {
+    from {
+      opacity: 0;
     }
-  }
+    to {
+      opacity: 1;
+    }
 }
 
-// For mobile devices
-@media (max-width: 480px) {
-  .main-header {
-    padding: 10px;
-
-    .container {
-      .logo {
-        font-size: 1.5rem;
-      }
-
-      nav {
-        a, button {
-          font-size: 0.9rem;
-        }
-      }
+@keyframes slideIn {
+    from {
+      transform: translateX(-100%);
     }
-  }
+    to {
+      transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
 }

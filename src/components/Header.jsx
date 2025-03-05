@@ -15,6 +15,7 @@ const Header = () => {
   return (
     <header className="main-header">
       <div className="container">
+      
         <Link to="/">
           <h1 className="logo">Sand Dunes Villa</h1>
         </Link>
