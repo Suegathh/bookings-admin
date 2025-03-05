@@ -1,5 +1,5 @@
 .main-header {
-    height: 250px; // Adjust the height as needed
+    height: 100px; // Adjust the height as needed
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,7 +34,7 @@
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    max-width: 1200px;
+    max-width: 60px;
     color: white;
     z-index: 2; // Ensure content appears above overlay
 }
