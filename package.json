@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
+    "axios": "^1.8.1",
     "cloudinary": "^2.5.1",
     "cra-template-redux": "2.0.0",
     "react": "^18.0.0",
@@ -26,9 +27,7 @@
       "react-app/jest"
     ]
   },
-  
-    "proxy": "https://booking-backend-bice.vercel.app",
-  
+  "proxy": "https://bookings-backend-g8dm.onrender.com",
   "browserslist": {
     "production": [
       ">0.2%",

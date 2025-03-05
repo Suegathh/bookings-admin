@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { confirmBooking, deleteBooking, reset } from "../features/booking/bookingSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const API_URL = "https://booking-backend-bice.vercel.app";
+const API_URL = "https://bookings-backend-g8dm.onrender.com"
 
 const Booking = () => {
   const { id } = useParams();

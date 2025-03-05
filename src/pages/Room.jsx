@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteRoom, reset } from "../features/room/roomSlice";
 import Carousel from "../components/Carousel";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = "https://bookings-backend-g8dm.onrender.com"
 
 const Room = () => {
   const { user } = useSelector((state) => state.auth);

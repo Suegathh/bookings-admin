@@ -18,7 +18,7 @@ const initialState = {
   message: "",
 };
 
-const API_URL = "https://booking-backend-bice.vercel.app";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 
 

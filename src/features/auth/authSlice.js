@@ -47,12 +47,12 @@ export const loginUser = createAsyncThunk(
         // Detailed fetch configuration
         const res = await fetch(`${API_URL}/api/users/login`, {
           method: "POST",
+          credentials: 'include',
           headers: { 
             "Content-Type": "application/json",
             // Optional: Add additional headers for debugging
             "X-Request-Source": "React-Frontend"
           },
-          credentials: "include", 
           body: JSON.stringify(userData),
         });
   

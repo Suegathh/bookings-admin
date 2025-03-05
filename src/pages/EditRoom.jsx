@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateRoom, reset } from "../features/room/roomSlice";
 import './EditRoom.scss';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = "https://bookings-backend-g8dm.onrender.com"
 
 const EditRoom = () => {
   const dispatch = useDispatch();
