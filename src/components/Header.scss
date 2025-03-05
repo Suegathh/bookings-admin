@@ -1,81 +1,101 @@
+$primary-color: #8BC34A; // Lighter main color
+$secondary-color: #f95252; // Secondary color (white)
+$hover-color: #7CB342; // Hover effect color
+$font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
 .main-header {
-    background-color: #333;
-    color: white;
-    padding: 10px 20px;
-  
-    .container {
+  background-color: $primary-color;
+  color: $secondary-color;
+  padding: 15px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      font-size: 1.8rem;
+      text-decoration: none;
+      color: $secondary-color;
+      font-family: $font-stack;
+      font-weight: bold;
+      transition: color 0.3s, transform 0.3s;
+
+      &:hover {
+        color: $hover-color;
+        transform: scale(1.1); // Add a slight zoom effect on hover
+      }
+    }
+
+    nav {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-  
+      gap: 25px;
+
+      a {
+        text-decoration: none;
+        color: $secondary-color;
+        font-size: 1rem;
+        font-family: $font-stack;
+        transition: color 0.3s, transform 0.3s;
+
+        &:hover {
+          color: $hover-color;
+          transform: translateY(-2px); // Add a slight lift effect on hover
+        }
+      }
+
+      button {
+        background: none;
+        border: 2px solid $secondary-color;
+        color: $secondary-color;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 5px 15px;
+        font-family: $font-stack;
+        transition: all 0.3s, transform 0.3s;
+
+        &:hover {
+          background-color: $hover-color;
+          border-color: $hover-color;
+          transform: translateY(-2px); // Add a slight lift effect on hover
+        }
+      }
+    }
+  }
+}
+
+// Media queries for responsiveness
+// For tablets and smaller devices
+@media (max-width: 768px) {
+  .main-header {
+    .container {
+      flex-direction: column;
+      text-align: center;
+
+      nav {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  }
+}
+
+// For mobile devices
+@media (max-width: 480px) {
+  .main-header {
+    padding: 10px;
+
+    .container {
       .logo {
         font-size: 1.5rem;
-        text-decoration: none;
-        color: white;
-        font-weight: bold;
       }
-  
+
       nav {
-        display: flex;
-        gap: 20px;
-  
-        a {
-          text-decoration: none;
-          color: white;
-          font-size: 1rem;
-  
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-  
-        button {
-          background: none;
-          border: none;
-          color: white;
-          cursor: pointer;
-          font-size: 1rem;
-  
-          &:hover {
-            text-decoration: underline;
-          }
+        a, button {
+          font-size: 0.9rem;
         }
       }
     }
   }
-  
-  // Media queries for responsiveness
-  // For tablets and smaller devices
-  @media (max-width: 768px) {
-    .main-header {
-      .container {
-        flex-direction: column;
-        text-align: center;
-  
-        nav {
-          flex-direction: column;
-          gap: 10px;
-        }
-      }
-    }
-  }
-  
-  // For mobile devices
-  @media (max-width: 480px) {
-    .main-header {
-      padding: 10px;
-  
-      .container {
-        .logo {
-          font-size: 1.2rem;
-        }
-  
-        nav {
-          a, button {
-            font-size: 0.9rem;
-          }
-        }
-      }
-    }
-  }
-  
+}
