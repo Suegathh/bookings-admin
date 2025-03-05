@@ -9,11 +9,12 @@ const initialState = {
   message: "",
 };
 
-const API_URL = "https://booking-backend-bice.vercel.app";
+const API_URL = "https://booking-backend-bice.vercel.app/api/bookings";
 
 // Helper function to get token
 const getToken = () => localStorage.getItem("token");
 
+// Create Booking
 export const createBooking = createAsyncThunk(
   "booking/create",
   async (bookingData, thunkApi) => {
@@ -21,7 +22,7 @@ export const createBooking = createAsyncThunk(
       const token = getToken();
       if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      const res = await fetch(`${API_URL}/api/bookings`, {
+      const res = await fetch(`${API_URL}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,7 +30,7 @@ export const createBooking = createAsyncThunk(
         },
         body: JSON.stringify(bookingData),
       });
-      
+
       const data = await res.json();
       if (!res.ok) return thunkApi.rejectWithValue(data);
 
@@ -40,6 +41,7 @@ export const createBooking = createAsyncThunk(
   }
 );
 
+// Get All Bookings
 export const getBookings = createAsyncThunk(
   "booking/getbookings",
   async (_, thunkApi) => {
@@ -47,9 +49,7 @@ export const getBookings = createAsyncThunk(
       const token = getToken();
       if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      console.log("Fetching bookings from API..."); // Debugging
-
-      const res = await fetch(`${API_URL}/api/bookings`, {
+      const res = await fetch(`${API_URL}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -58,18 +58,16 @@ export const getBookings = createAsyncThunk(
       });
 
       const data = await res.json();
-      console.log("Bookings response:", data); // Debugging
-
       if (!res.ok) return thunkApi.rejectWithValue(data);
 
       return data;
     } catch (error) {
-      console.error("Fetch error:", error); // Debugging
       return thunkApi.rejectWithValue(error.message);
     }
   }
 );
 
+// Delete Booking
 export const deleteBooking = createAsyncThunk(
   "booking/delete",
   async (id, thunkApi) => {
@@ -88,13 +86,14 @@ export const deleteBooking = createAsyncThunk(
       const data = await res.json();
       if (!res.ok) return thunkApi.rejectWithValue(data);
 
-      return data;
+      return id; // Return only the deleted booking ID
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
     }
   }
 );
 
+// Confirm Booking
 export const confirmBooking = createAsyncThunk(
   "booking/confirm",
   async (bookingId, thunkApi) => {
@@ -114,7 +113,7 @@ export const confirmBooking = createAsyncThunk(
       const data = await res.json();
       if (!res.ok) return thunkApi.rejectWithValue(data);
 
-      return data;
+      return { bookingId, confirmed: true };
     } catch (error) {
       return thunkApi.rejectWithValue(error.message);
     }
@@ -151,7 +150,6 @@ export const bookingSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getBookings.fulfilled, (state, action) => {
-        console.log("Redux received bookings:", action.payload);
         state.isLoading = false;
         state.isSuccess = true;
         state.bookings = action.payload;
@@ -168,7 +166,7 @@ export const bookingSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.bookings = state.bookings.filter(
-          (booking) => booking._id !== action.payload.id
+          (booking) => booking._id !== action.payload
         );
       })
       .addCase(deleteBooking.rejected, (state, action) => {
@@ -182,7 +180,11 @@ export const bookingSlice = createSlice({
       .addCase(confirmBooking.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.bookings = action.payload;
+        state.bookings = state.bookings.map((booking) =>
+          booking._id === action.payload.bookingId
+            ? { ...booking, confirmed: true }
+            : booking
+        );
       })
       .addCase(confirmBooking.rejected, (state, action) => {
         state.isLoading = false;
