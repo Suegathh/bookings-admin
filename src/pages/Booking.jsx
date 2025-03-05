@@ -30,35 +30,40 @@ const Booking = () => {
 
     const getBooking = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get token from storage
-        if (!token) {
-          throw new Error("Authentication required. Please log in.");
-        }
-
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Authentication required. Please log in.");
+    
+        console.log("📡 Fetching booking details...");
+    
         const res = await fetch(`${API_URL}/api/bookings/${id}`, {
           method: "GET",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           signal,
         });
-
+    
+        console.log("📡 Response Status:", res.status);
+    
         if (!res.ok) {
           const errorData = await res.json();
+          console.error("🚨 Error fetching booking:", errorData);
           throw new Error(errorData.message || `HTTP Error! Status: ${res.status}`);
         }
-
+    
         const data = await res.json();
+        console.log("✅ Booking Fetched Successfully:", data);
         setBooking(data);
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.error("Fetch error:", error.message);
+          console.error("❌ Fetch error:", error.message);
           setError(error.message);
         }
       }
     };
+    
 
     getBooking();
     return () => controller.abort();

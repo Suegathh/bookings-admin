@@ -32,41 +32,113 @@ export const registerUser = createAsyncThunk(
 
 // 🚀 Login User
 export const loginUser = createAsyncThunk(
-  "auth/login",
-  async (userData, thunkAPI) => {
-    try {
-      console.log("Login Attempt:", userData);
-      
-      const res = await fetch(`${API_URL}/api/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", 
-        body: JSON.stringify(userData),
-      });
-
-      console.log("Login Response Status:", res.status);
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Login Error:", errorText);
-        return thunkAPI.rejectWithValue(errorText || "Login failed");
+    "auth/login",
+    async (userData, thunkAPI) => {
+      try {
+        // Comprehensive request logging
+        console.group('Login Request Details');
+        console.log('API URL:', `${API_URL}/api/users/login`);
+        console.log('Request Payload:', {
+          email: userData.email,
+          passwordLength: userData.password.length
+        });
+        console.groupEnd();
+  
+        // Detailed fetch configuration
+        const res = await fetch(`${API_URL}/api/users/login`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            // Optional: Add additional headers for debugging
+            "X-Request-Source": "React-Frontend"
+          },
+          credentials: "include", 
+          body: JSON.stringify(userData),
+        });
+  
+        // Comprehensive response logging
+        console.group('Login Response');
+        console.log('Response Status:', res.status);
+        console.log('Response Headers:', Object.fromEntries(res.headers.entries()));
+        console.groupEnd();
+  
+        // Detailed error handling
+        if (!res.ok) {
+          const errorText = await res.text();
+          
+          console.group('Login Error Details');
+          console.error('Error Status:', res.status);
+          console.error('Error Text:', errorText);
+          console.groupEnd();
+  
+          // Provide more specific error messages
+          switch (res.status) {
+            case 401:
+              return thunkAPI.rejectWithValue("Invalid email or password");
+            case 403:
+              return thunkAPI.rejectWithValue("Access forbidden");
+            case 500:
+              return thunkAPI.rejectWithValue("Server error. Please try again later.");
+            default:
+              return thunkAPI.rejectWithValue(errorText || "Login failed");
+          }
+        }
+  
+        // Parse response data
+        let data;
+        try {
+          data = await res.json();
+          console.log('Parsed Response Data:', data);
+        } catch (parseError) {
+          console.error('JSON Parsing Error:', parseError);
+          return thunkAPI.rejectWithValue("Invalid server response");
+        }
+  
+        // Validate token
+        if (!data.token) {
+          console.error('No token in response:', data);
+          return thunkAPI.rejectWithValue("Authentication token missing");
+        }
+  
+        // Comprehensive user object creation
+        const userWithToken = {
+          id: data.id || data._id,
+          name: data.name,
+          email: data.email,
+          token: data.token
+        };
+  
+        // Secure token storage
+        try {
+          localStorage.setItem("user", JSON.stringify(userWithToken));
+          localStorage.setItem("token", data.token);
+        } catch (storageError) {
+          console.error('Local Storage Error:', storageError);
+          return thunkAPI.rejectWithValue("Unable to store authentication data");
+        }
+  
+        return userWithToken;
+      } catch (error) {
+        // Network or unexpected errors
+        console.group('Unexpected Login Error');
+        console.error('Error Name:', error.name);
+        console.error('Error Message:', error.message);
+        console.error('Error Stack:', error.stack);
+        console.groupEnd();
+  
+        // Specific network error handling
+        if (error.name === 'TypeError') {
+          return thunkAPI.rejectWithValue(
+            "Network error. Please check your internet connection."
+          );
+        }
+  
+        return thunkAPI.rejectWithValue(
+          error.message || "An unexpected error occurred during login"
+        );
       }
-
-      const data = await res.json();
-      console.log("Login Response Data:", data);
-
-      // Ensure token is stored properly
-      const userWithToken = { ...data, token: data.token };
-      localStorage.setItem("user", JSON.stringify(userWithToken));
-
-      return userWithToken;
-    } catch (error) {
-      console.error("Login Error:", error);
-      return thunkAPI.rejectWithValue(error.message || "Something went wrong");
     }
-  }
-);
-
+  );
 // 🚀 Logout User
 export const logoutUser = createAsyncThunk(
   "auth/logout",

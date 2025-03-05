@@ -70,7 +70,7 @@ const Room = () => {
 
             {user && user.isAdmin && (
               <div className="cta-wrapper">
-                <Link to={`/edit/rooms/${room._id}`}>Edit Room</Link>
+                <Link to={`/rooms/edit/${room._id}`}>Edit Room</Link>
                 <button onClick={handleDelete}>Delete Room</button>
               </div>
             )}

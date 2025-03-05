@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { updateRoom, reset } from "../features/room/roomSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { updateRoom, reset } from "../features/room/roomSlice";
+import './EditRoom.scss';
 
-const API_URL = "https://booking-backend-bice.vercel.app"; // ✅ Ensure API URL
+const API_URL = process.env.REACT_APP_API_URL;
 
 const EditRoom = () => {
   const dispatch = useDispatch();
@@ -23,19 +24,25 @@ const EditRoom = () => {
 
   const { name, price, desc, roomNumbers } = formData;
 
-  // ✅ Fetch Room Data on Component Mount
+  // Fetch Room Data
   useEffect(() => {
     const getRoom = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(`${API_URL}/api/rooms/${id}`, { credentials: "include" });
+        const res = await fetch(`${API_URL}/api/rooms/${id}`, { 
+          credentials: "include",
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
         if (!res.ok) throw new Error(`Failed to fetch room data: ${res.status}`);
 
         const data = await res.json();
 
-        // ✅ Convert roomNumbers array to a comma-separated string safely
+        // Convert roomNumbers array to a comma-separated string
         const roomString = (data.roomNumbers || []).map((item) => item.number).join(", ");
 
         setFormData({
@@ -54,7 +61,7 @@ const EditRoom = () => {
     getRoom();
   }, [id]);
 
-  // ✅ Redirect on Successful Update
+  // Redirect on Successful Update
   useEffect(() => {
     if (isSuccess) {
       dispatch(reset());
@@ -69,6 +76,7 @@ const EditRoom = () => {
     }));
   };
 
+  // Add handleSubmit function
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -77,40 +85,46 @@ const EditRoom = () => {
       return;
     }
 
-    // ✅ Convert roomNumbers string to an array of objects
+    // Convert roomNumbers string to an array of objects
     const roomArray = roomNumbers
       .split(",")
       .map((num) => {
         const parsedNum = parseInt(num.trim(), 10);
         return !isNaN(parsedNum) ? { number: parsedNum, unavailableDates: [] } : null;
       })
-      .filter(Boolean); // ✅ Remove null values
+      .filter(Boolean);
 
     const dataToSubmit = {
       name,
       price: parseFloat(price),
       desc,
       roomNumbers: roomArray,
-      roomId: id, // ✅ Ensure `id` is sent
+      roomId: id,
     };
 
     dispatch(updateRoom(dataToSubmit));
   };
 
   return (
-    <div className="container">
-      <h1 className="heading center">Edit Room</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4 text-center">Edit Room</h1>
 
-      <div className="form-wrapper">
+      <div className="max-w-md mx-auto">
         {loading ? (
-          <p>Loading room details...</p>
+          <div className="text-center">Loading room details...</div>
         ) : error ? (
-          <p className="error">{error}</p>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="input-group">
-              <label htmlFor="name">Name</label>
+          <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                Name
+              </label>
               <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="text"
                 name="name"
                 value={name}
@@ -120,9 +134,12 @@ const EditRoom = () => {
               />
             </div>
 
-            <div className="input-group">
-              <label htmlFor="price">Price</label>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
+                Price
+              </label>
               <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="number"
                 name="price"
                 value={price}
@@ -132,14 +149,25 @@ const EditRoom = () => {
               />
             </div>
 
-            <div className="input-group">
-              <label htmlFor="desc">Description</label>
-              <textarea name="desc" onChange={handleChange} value={desc}></textarea>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="desc">
+                Description
+              </label>
+              <textarea
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                name="desc"
+                onChange={handleChange}
+                value={desc}
+                placeholder="Enter room description"
+              ></textarea>
             </div>
 
-            <div className="input-group">
-              <label htmlFor="roomNumbers">Room Numbers</label>
+            <div className="mb-6">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="roomNumbers">
+                Room Numbers
+              </label>
               <textarea
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 name="roomNumbers"
                 onChange={handleChange}
                 value={roomNumbers}
@@ -148,9 +176,15 @@ const EditRoom = () => {
               ></textarea>
             </div>
 
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? "Updating..." : "Submit"}
-            </button>
+            <div className="flex items-center justify-between">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? "Updating..." : "Update Room"}
+              </button>
+            </div>
           </form>
         )}
       </div>

@@ -1,5 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const getToken = () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.warn("⚠️ No token found in localStorage!");
+  }
+  return token;
+};
+
+
 const initialState = {
   bookings: [],
   booking: null,
@@ -9,10 +18,9 @@ const initialState = {
   message: "",
 };
 
-const API_URL = "https://booking-backend-bice.vercel.app/api/bookings";
+const API_URL = "https://booking-backend-bice.vercel.app";
 
-// Helper function to get token
-const getToken = () => localStorage.getItem("token");
+
 
 // Create Booking
 export const createBooking = createAsyncThunk(
@@ -22,7 +30,7 @@ export const createBooking = createAsyncThunk(
       const token = getToken();
       if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      const res = await fetch(`${API_URL}`, {
+      const res = await fetch(`${API_URL}/api/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,23 +57,40 @@ export const getBookings = createAsyncThunk(
       const token = getToken();
       if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      const res = await fetch(`${API_URL}`, {
+      console.log("📡 Fetching bookings...");
+      console.log("🔑 Sending Token:", token);
+
+      const res = await fetch(`${API_URL}/api/bookings`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include", // ✅ Ensures cookies are sent with the request
       });
+      
 
       const data = await res.json();
-      if (!res.ok) return thunkApi.rejectWithValue(data);
+
+      console.log("📡 Booking Fetch Response");
+      console.log("Response Status:", res.status);
+      console.log("Response Headers:", res.headers);
+      console.log("Response Body:", data);
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error("🚨 Unauthorized Access Detected");
+        }
+        return thunkApi.rejectWithValue(data);
+      }
 
       return data;
     } catch (error) {
+      console.error("❌ Fetch error:", error);
       return thunkApi.rejectWithValue(error.message);
     }
   }
 );
+
 
 // Delete Booking
 export const deleteBooking = createAsyncThunk(
@@ -75,7 +100,7 @@ export const deleteBooking = createAsyncThunk(
       const token = getToken();
       if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      const res = await fetch(`${API_URL}/${id}`, {
+      const res = await fetch(`${API_URL}/api/bookings/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -101,14 +126,15 @@ export const confirmBooking = createAsyncThunk(
       const token = getToken();
       if (!token) return thunkApi.rejectWithValue("No token found, please log in.");
 
-      const res = await fetch(`${API_URL}/${bookingId}`, {
+      const res = await fetch(`${API_URL}/api/bookings/${bookingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ confirmed: true }),
       });
+      
 
       const data = await res.json();
       if (!res.ok) return thunkApi.rejectWithValue(data);
@@ -148,16 +174,24 @@ export const bookingSlice = createSlice({
       })
       .addCase(getBookings.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
+        state.message = "";
       })
       .addCase(getBookings.fulfilled, (state, action) => {
+        console.log("✅ Bookings fetched successfully:", action.payload);
         state.isLoading = false;
         state.isSuccess = true;
         state.bookings = action.payload;
+        state.isError = false;
       })
+      
       .addCase(getBookings.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload;
+        state.bookings = [];
+        state.message = typeof action.payload === 'string' 
+          ? action.payload 
+          : "Authentication failed. Please log in again.";
       })
       .addCase(deleteBooking.pending, (state) => {
         state.isLoading = true;

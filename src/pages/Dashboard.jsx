@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getBookings, reset } from "../features/booking/bookingSlice";
@@ -8,10 +8,13 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
-  const { bookings, isSuccess, isLoading, isError, message } = useSelector((state) => state.booking);
+  const [authCheckComplete, setAuthCheckComplete] = useState(false);
+  const [localUserData, setLocalUserData] = useState(null);
 
-  // Reset state when necessary
+  // Redux state selectors
+  const { user } = useSelector((state) => state.auth);
+  const { bookings, isLoading, isError, message: bookingMessage, isSuccess } = useSelector((state) => state.booking);
+
   useEffect(() => {
     if (isSuccess) {
       dispatch(reset());
@@ -19,35 +22,56 @@ const Dashboard = () => {
   }, [isSuccess, dispatch]);
 
   useEffect(() => {
-    console.log("Bookings in Dashboard:", bookings);
-  }, [bookings]);
-  
-  // Fetch bookings only when user is available
-  useEffect(() => {
-    if (!user) {
+    const storedUser = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null;
+    const token = localStorage.getItem("token");
+
+    if (!token || !storedUser) {
+      console.warn("❌ No valid authentication credentials");
       navigate("/login");
-    } else {
+      return;
+    }
+
+    setLocalUserData(storedUser);
+    setAuthCheckComplete(true);
+  }, [navigate]);
+
+  useEffect(() => {
+    if (authCheckComplete) {
       dispatch(getBookings());
     }
-  }, [user, dispatch, navigate]);
+  }, [authCheckComplete, dispatch]);
+
+  // ✅ Navigate to full booking list page
+  const handleViewAllBookings = () => {
+    navigate("/bookings");
+  };
 
   return (
-    <div>
-      <h1 className="heading center">Dashboard</h1>
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <h1>Welcome, {localUserData?.name || "User"}</h1>
+      </header>
 
-      {isLoading && <p>Loading bookings...</p>}
-      {isError && <p className="error">Error: {message}</p>}
+      <section className="bookings-section">
+        <h2>Recent Bookings</h2>
 
-      {bookings?.length > 0 ? (
-  <ul>
-    {bookings.map((booking, index) => (
-      <li key={index}>{booking.hotelName}</li> // Ensure property exists
-          ))}
-        </ul>
-      ) : (
-        <p>No bookings found.</p>
-      )}
+        {isLoading && <p>Loading bookings...</p>}
+        {isError && <p className="error-text">Error: {bookingMessage || "Failed to load bookings"}</p>}
+        {!isLoading && !isError && (!bookings || bookings.length === 0) && <p>No bookings found.</p>}
 
+        {bookings && bookings.length > 0 && (
+          <>
+            <BookingList data={bookings.slice(0, 5)} /> {/* Show only 5 recent bookings */}
+
+            {/* ✅ Button to View Full Booking List */}
+            <button className="view-all-btn" onClick={handleViewAllBookings}>
+              View All Bookings
+            </button>
+          </>
+        )}
+      </section>
     </div>
   );
 };
