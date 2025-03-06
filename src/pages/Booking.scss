@@ -1,27 +1,112 @@
 #booking {
-    .content-wrapper {
-      width: 540px;
-      max-width: 90%;
-      margin: 0 auto;
-      text-align: center;
-      p {
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-      }
-      .cta-wrapper {
-        button {
-            border-radius: 5px;
-          outline: none;
-          border: none;
-          cursor: pointer;
-          margin-left: 1rem;
-          padding: 1rem 2rem;
-          background-color: black;
-          color: white;
-          &.danger {
-            background-color: red;
-          }
-        }
-      }
-    }
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  font-size: 2rem;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.center {
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-size: 1rem;
+  text-align: center;
+  background: #ffe6e6;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.content-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.text-wrapper {
+  width: 100%;
+  text-align: center;
+}
+
+.email {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+/* Buttons now stacked below */
+.cta-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+button {
+  width: 100%;
+  max-width: 250px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:first-of-type {
+  background: #3498db;
+  color: white;
+}
+
+button.danger {
+  background: #e74c3c;
+  color: white;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  #booking {
+    padding: 1rem;
   }
+
+  .text-wrapper {
+    text-align: center;
+  }
+
+  .cta-wrapper {
+    width: 100%;
+    align-items: center;
+  }
+
+  button {
+    width: 100%;
+  }
+}

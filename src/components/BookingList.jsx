@@ -23,23 +23,21 @@ const BookingList = ({ data = [] }) => {
               </tr>
             </thead>
             <tbody>
-              {data.map((item) => {
-                // Debug: Log each item to see its structure
-                console.log("Booking item:", item);
-                
-                return (
-                  <tr key={item._id}>
-                    <td className="booking-name">{item.name || item.customerName || item.userName || 'N/A'}</td>
-                    <td>{item.email || 'N/A'}</td>
-                    <td>{item.roomId?.name || item.room?.name || 'Unknown Room'}</td>
-                    <td>{item.confirmed ? "Yes" : "No"}</td>
-                    <td>
-                      <Link to={`/bookings/${item._id}`}>View</Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
+             {data.map((item) => (
+               <tr key={item._id}>
+                  <td data-label="Name" className="booking-name">
+                    {item.name || item.customerName || item.userName || "N/A"}
+                  </td>
+                  <td data-label="Email">{item.email || "N/A"}</td>
+                  <td data-label="Room">{item.roomId?.name || item.room?.name || "Unknown Room"}</td>
+                  <td data-label="Confirmed">{item.confirmed ? "Yes" : "No"}</td>
+                  <td data-label="Action">
+                    <Link to={`/bookings/${item._id}`}>View</Link>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
           </table>
         )}
       </div>

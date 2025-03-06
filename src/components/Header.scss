@@ -1,102 +1,78 @@
 .main-header {
-  background-color: #d7e7f6;
-  padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%; 
-  border-radius: 5px;
-  animation: slideIn 1s ease-in-out;
-
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px; 
-    margin: 10px auto;
-    padding: 1.5rem;
-    background-color: #a2c4e8;
-    border-radius: 5px;
-    animation: fadeIn 1s ease-in-out;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c3e50;
+  color: white;
+  padding: 1rem 1rem; /* Reduced padding to bring elements closer */
+  position: relative;
 
   .logo {
-    font-size: 1.75rem; /* Increased font size for better visibility */
-    color: #333;
-    animation: fadeIn 1.5s ease-in-out;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    transition: font-size 0.3s ease; /* Smooth transition for resizing */
   }
 
-  nav {
+  .menu-button {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .dropdown-menu {
     display: flex;
-    align-items: center;
-
-    a {
-      margin: 0 0.5rem; /* Adjusted margin */
-      font-size: 1rem;
-      color: #333;
-      text-decoration: none;
-      transition: color 0.3s, transform 0.3s;
-
-      &:hover {
-        color: #007bff;
-        transform: scale(1.1); /* Add a scaling effect on hover */
-      }
-
-      animation: fadeIn 1.5s ease-in-out;
-    }
-    
-
-    button {
-      background-color: #007bff;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem; /* Padding for buttons */
-      font-size: 1rem;
-      border-radius: 5px; /* Rounded corners for buttons */
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
-
-      &:hover {
-        background-color: #0056b3;
-        transform: scale(1.05); /* Add a scaling effect on hover */
-      }
-
-      animation: fadeIn 1.5s ease-in-out;
-    }
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .main-header .container {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  nav {
-    margin-top: 1rem;
+    gap: 0.8rem; /* Reduced gap for a tighter layout */
 
     a, button {
+      background: none;
+      border: none;
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.5rem 0.8rem;
+      transition: 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+      }
+    }
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    padding: 0.8rem 1rem; /* Further minimize space around header */
+
+    .logo {
+      font-size: 1rem; /* Reduce logo size on mobile */
+    }
+
+    .menu-button {
       display: block;
-      margin: 0.5rem 0;
+      font-size: 1.3rem; /* Slightly smaller icon */
+    }
+
+    .dropdown-menu {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #2c3e50;
+      width: 180px; /* Slightly smaller dropdown */
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .dropdown-menu.open {
+      display: flex;
     }
   }
 }
