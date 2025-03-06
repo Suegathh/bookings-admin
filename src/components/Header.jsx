@@ -27,7 +27,7 @@ const Header = () => {
             <>
               <Link to="/dashboard">Dashboard</Link>
               <Link to="/rooms/create">Create</Link>
-              <Link to='/login'>
+              <Link to='/'>
               <button onClick={handleLogout}>Logout
               </button>
               </Link>
