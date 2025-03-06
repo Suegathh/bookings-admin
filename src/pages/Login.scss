@@ -1,0 +1,120 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f6f8;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+  
+  .login-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: slideUp 1s ease-in-out;
+  
+    h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+  
+    .error-banner {
+      background-color: #ffdddd;
+      color: #d8000c;
+      padding: 0.5rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+  
+    .form-group {
+      margin-bottom: 1rem;
+  
+      label {
+        display: block;
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+        text-align: left;
+      }
+  
+      input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+    }
+  
+    .login-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+  
+      &:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+      }
+  
+      &:hover:not(:disabled) {
+        background-color: #0056b3;
+        transform: scale(1.05);
+      }
+    }
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .login-card {
+      padding: 1.5rem;
+      h2 {
+        font-size: 1.5rem;
+      }
+      .form-group {
+        label {
+          font-size: 0.875rem;
+        }
+        input {
+          padding: 0.5rem;
+          font-size: 0.875rem;
+        }
+      }
+      .login-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+  

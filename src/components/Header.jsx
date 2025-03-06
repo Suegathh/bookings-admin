@@ -27,7 +27,10 @@ const Header = () => {
             <>
               <Link to="/dashboard">Dashboard</Link>
               <Link to="/rooms/create">Create</Link>
-              <button onClick={handleLogout}>Logout</button>
+              <Link to='/login'>
+              <button onClick={handleLogout}>Logout
+              </button>
+              </Link>
             </>
           ) : (
             <>

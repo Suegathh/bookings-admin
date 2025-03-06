@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { loginUser, reset } from "../features/auth/authSlice";
+import './Login.scss'
 
 const Login = () => {
   const navigate = useNavigate();
