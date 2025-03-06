@@ -94,7 +94,6 @@ const CreateRoom = () => {
   
     return (
       <div className="container">
-        <h1 className="heading center">Create Room</h1>
   
         <div className="form-wrapper">
           <form onSubmit={handleSubmit}>

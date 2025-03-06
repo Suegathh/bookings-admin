@@ -59,8 +59,6 @@ const Dashboard = () => {
       </header>
 
       <section className="bookings-section">
-        <h2>Recent Bookings</h2>
-
         {isLoading && <p>Loading bookings...</p>}
         {isError && <p className="error-text">Error: {bookingMessage || "Failed to load bookings"}</p>}
         

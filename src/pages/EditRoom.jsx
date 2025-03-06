@@ -109,8 +109,6 @@ const EditRoom = () => {
 
   return (
     <div className="container">
-      <h2 className="text-center text-xl font-bold mb-4">Edit Room</h2>
-
       {loading ? (
         <p className="text-center">Loading room details...</p>
       ) : error ? (
