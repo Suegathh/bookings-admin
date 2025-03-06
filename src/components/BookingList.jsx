@@ -8,7 +8,6 @@ const BookingList = ({ data = [] }) => {
   
   return (
     <div className="container">
-      <div className="table-container">
         {data.length === 0 ? (
           <p>No bookings found</p>
         ) : (
@@ -40,7 +39,7 @@ const BookingList = ({ data = [] }) => {
 
           </table>
         )}
-      </div>
+      
     </div>
   );
 };

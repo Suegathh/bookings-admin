@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1300px;
     min-height: 100vh; // Ensure the container takes the full height of the viewport
     padding: 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -33,7 +33,7 @@
       }
   
       .booking-list {
-        flex-grow: 1; // Make the booking list take most of the space
+        flex-grow: 3; // Make the booking list take most of the space
         overflow: auto; // Ensure it remains scrollable if content overflows
       }
     }
