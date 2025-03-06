@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateRoom, reset } from "../features/room/roomSlice";
-import './EditRoom.scss';
+import "./EditRoom.scss";
 
-const API_URL = "https://bookings-backend-g8dm.onrender.com"
+const API_URL = "https://bookings-backend-g8dm.onrender.com";
 
 const EditRoom = () => {
   const dispatch = useDispatch();
@@ -20,29 +20,26 @@ const EditRoom = () => {
     price: "",
     desc: "",
     roomNumbers: "",
+    images: [],
   });
 
-  const { name, price, desc, roomNumbers } = formData;
+  const [selectedImages, setSelectedImages] = useState([]);
+  const { name, price, desc, roomNumbers, images } = formData;
 
-  // Fetch Room Data
   useEffect(() => {
     const getRoom = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(`${API_URL}/api/rooms/${id}`, { 
+        const res = await fetch(`${API_URL}/api/rooms/${id}`, {
           credentials: "include",
-          headers: {
-            'Accept': 'application/json'
-          }
+          headers: { Accept: "application/json" },
         });
-        
+
         if (!res.ok) throw new Error(`Failed to fetch room data: ${res.status}`);
 
         const data = await res.json();
-
-        // Convert roomNumbers array to a comma-separated string
         const roomString = (data.roomNumbers || []).map((item) => item.number).join(", ");
 
         setFormData({
@@ -50,6 +47,7 @@ const EditRoom = () => {
           price: data.price || "",
           desc: data.desc || "",
           roomNumbers: roomString,
+          images: data.img || [],
         });
       } catch (error) {
         console.error("Fetch Error:", error.message);
@@ -61,7 +59,6 @@ const EditRoom = () => {
     getRoom();
   }, [id]);
 
-  // Redirect on Successful Update
   useEffect(() => {
     if (isSuccess) {
       dispatch(reset());
@@ -76,7 +73,11 @@ const EditRoom = () => {
     }));
   };
 
-  // Add handleSubmit function
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedImages(files);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -85,7 +86,6 @@ const EditRoom = () => {
       return;
     }
 
-    // Convert roomNumbers string to an array of objects
     const roomArray = roomNumbers
       .split(",")
       .map((num) => {
@@ -94,100 +94,71 @@ const EditRoom = () => {
       })
       .filter(Boolean);
 
-    const dataToSubmit = {
-      name,
-      price: parseFloat(price),
-      desc,
-      roomNumbers: roomArray,
-      roomId: id,
-    };
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", parseFloat(price));
+    formData.append("desc", desc);
+    formData.append("roomNumbers", JSON.stringify(roomArray));
 
-    dispatch(updateRoom(dataToSubmit));
+    selectedImages.forEach((image) => {
+      formData.append("images", image);
+    });
+
+    dispatch(updateRoom({ roomId: id, formData }));
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Edit Room</h1>
+    <div className="container">
+      <h2 className="text-center text-xl font-bold mb-4">Edit Room</h2>
 
-      <div className="max-w-md mx-auto">
-        {loading ? (
-          <div className="text-center">Loading room details...</div>
-        ) : error ? (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{error}</span>
+      {loading ? (
+        <p className="text-center">Loading room details...</p>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="name">Room Name</label>
+          <input type="text" name="name" value={name} onChange={handleChange} required />
+
+          <label htmlFor="price">Price</label>
+          <input type="number" name="price" value={price} onChange={handleChange} required />
+
+          <label htmlFor="desc">Description</label>
+          <textarea name="desc" onChange={handleChange} value={desc} />
+
+          <label htmlFor="roomNumbers">Room Numbers</label>
+          <textarea
+            name="roomNumbers"
+            onChange={handleChange}
+            value={roomNumbers}
+            placeholder="Enter room numbers (e.g., 101, 102, 103)"
+            required
+          ></textarea>
+
+          {/* Existing Images */}
+          <div className="image-preview-container">
+            {images.map((img, index) => (
+              <img key={index} src={img} alt={`Room ${index}`} />
+            ))}
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                name="name"
-                value={name}
-                placeholder="Enter room name"
-                onChange={handleChange}
-                required
-              />
-            </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
-                Price
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="number"
-                name="price"
-                value={price}
-                placeholder="Enter room price"
-                onChange={handleChange}
-                required
-              />
-            </div>
+          {/* Upload New Images */}
+          <label>Upload New Images</label>
+          <input type="file" multiple accept="image/*" onChange={handleImageChange} />
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="desc">
-                Description
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                name="desc"
-                onChange={handleChange}
-                value={desc}
-                placeholder="Enter room description"
-              ></textarea>
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="roomNumbers">
-                Room Numbers
-              </label>
-              <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                name="roomNumbers"
-                onChange={handleChange}
-                value={roomNumbers}
-                placeholder="Enter room numbers separated by commas (e.g. 202, 203, 204)"
-                required
-              ></textarea>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit"
-                disabled={isLoading}
-              >
-                {isLoading ? "Updating..." : "Update Room"}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
+          <div className="button-group">
+            <button className="action-button" type="submit" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update Room"}
+            </button>
+            <button className="action-button delete" type="button">
+              Delete
+            </button>
+            <button className="action-button cancel" type="button" onClick={() => navigate("/rooms")}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };

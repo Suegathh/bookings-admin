@@ -1,112 +1,101 @@
 .main-header {
-    height: 100px; // Adjust the height as needed
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
+  background-color: #d7e7f6;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%; 
+  border-radius: 5px;
+  animation: slideIn 1s ease-in-out;
 
-    .header-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1; // Send image to back
-      animation: fadeIn 2s ease-in-out;
-    }
-  
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(225, 199, 199, 0.5); // Adds a dark overlay for readability
-    }
-  }
-  
-.container {
-    position: relative;
+  .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 90%;
-    max-width: 60px;
-    color: white;
-    z-index: 2; // Ensure content appears above overlay
-}
-  
-.logo {
-    font-size: 2rem;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-    animation: slideIn 1s ease-in-out;
-}
-  
-nav {
-    display: flex;
-    gap: 20px;
-}
-
-nav a {
-    color: rgb(21, 20, 20);
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 1.1rem;
-    transition: color 0.3s ease-in-out;
-    animation: fadeInUp 0.5s ease-in-out;
-}
-  
-nav a:hover {
-    color: #ffd700; // Golden color on hover
-}
-  
-button {
-    background: transparent;
+    max-width: 1200px; 
+    margin: 10px auto;
+    padding: 1.5rem;
+    background-color: #a2c4e8;
     border-radius: 5px;
-    border: none;
-    color: rgb(82, 36, 36);
-    padding: 8px 15px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    animation: fadeInUp 0.5s ease-in-out;
-}
-  
-button:hover {
-    background: white;
-    color: black;
-}
-  
-@keyframes fadeIn {
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  .logo {
+    font-size: 1.75rem; /* Increased font size for better visibility */
+    color: #333;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+
+    a {
+      margin: 0 0.5rem; /* Adjusted margin */
+      font-size: 1rem;
+      color: #333;
+      text-decoration: none;
+      transition: color 0.3s, transform 0.3s;
+
+      &:hover {
+        color: #007bff;
+        transform: scale(1.1); /* Add a scaling effect on hover */
+      }
+
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    button {
+      background-color: #007bff;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem; /* Padding for buttons */
+      font-size: 1rem;
+      border-radius: 5px; /* Rounded corners for buttons */
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+
+      &:hover {
+        background-color: #0056b3;
+        transform: scale(1.05); /* Add a scaling effect on hover */
+      }
+
+      animation: fadeIn 1.5s ease-in-out;
+    }
+  }
+
+  @keyframes slideIn {
     from {
       opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-}
-
-@keyframes slideIn {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
-      transform: translateX(0);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(-20px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-header .container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav {
+    margin-top: 1rem;
+
+    a, button {
+      display: block;
+      margin: 0.5rem 0;
+    }
+  }
 }

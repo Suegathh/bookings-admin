@@ -5,16 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteRoom, reset } from "../features/room/roomSlice";
 import Carousel from "../components/Carousel";
 
-const API_URL = "https://bookings-backend-g8dm.onrender.com"
+const API_URL = "https://bookings-backend-g8dm.onrender.com";
 
 const Room = () => {
-  const { user } = useSelector((state) => state.auth);
   const { isSuccess } = useSelector((state) => state.room);
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ Loading state
+  const [loading, setLoading] = useState(true);
 
   // ✅ Handle Navigation After Room Deletion
   useEffect(() => {
@@ -46,7 +45,7 @@ const Room = () => {
     };
 
     getRoom();
-  }, [id]); // ✅ Dependency Array
+  }, [id]);
 
   const handleDelete = () => {
     dispatch(deleteRoom(id));
@@ -63,17 +62,16 @@ const Room = () => {
               <Carousel data={room.img} />
             </div>
             <div className="text-wrapper">
-              <h1 className="heading center"> {room.name} </h1>
-              <p> {room.desc} </p>
-              <h2> ${room.price.toFixed(2)} </h2>
+              <h1 className="heading center">{room.name}</h1>
+              <p>{room.desc}</p>
+              <h2>${room.price.toFixed(2)}</h2>
             </div>
 
-            {user && user.isAdmin && (
-              <div className="cta-wrapper">
-                <Link to={`/rooms/edit/${room._id}`}>Edit Room</Link>
-                <button onClick={handleDelete}>Delete Room</button>
-              </div>
-            )}
+            {/* ✅ Everyone can now see Edit/Delete buttons */}
+            <div className="cta-wrapper">
+              <Link to={`/rooms/edit/${room._id}`}>Edit Room</Link>
+              <button onClick={handleDelete}>Delete Room</button>
+            </div>
           </div>
         ) : (
           <p>Room not found.</p>

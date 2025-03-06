@@ -13,10 +13,10 @@ const CreateRoom = () => {
   
     const [files, setFiles] = useState("");
     const [formData, setFormData] = useState({
-      name: "test",
-      price: 200,
-      desc: "dafdafadfa",
-      roomNumbers: "401, 203, 232, 234",
+      name: "",
+      price: '',
+      desc: "",
+      roomNumbers: "",
     });
   
     const { name, price, desc, roomNumbers } = formData;

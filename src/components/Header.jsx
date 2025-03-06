@@ -15,17 +15,17 @@ const Header = () => {
   return (
     <header className="main-header">
       <div className="container">
-      
         <Link to="/">
           <h1 className="logo">Sand Dunes Villa</h1>
         </Link>
 
         <nav>
-          
+          <Link to="/">Home</Link>
           <Link to="/rooms">Rooms</Link>
+
           {user ? (
             <>
-            <Link to="/dashboard">Dashboard</Link>
+              <Link to="/dashboard">Dashboard</Link>
               <Link to="/rooms/create">Create</Link>
               <button onClick={handleLogout}>Logout</button>
             </>
@@ -33,7 +33,6 @@ const Header = () => {
             <>
               <Link to="/login">Login</Link>
               <Link to="/register">Register</Link>
-            
             </>
           )}
         </nav>

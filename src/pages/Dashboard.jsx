@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getBookings, reset } from "../features/booking/bookingSlice";
 import BookingList from "../components/BookingList";
+import "./Dashboard.scss"; // Import the new stylesheet
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -43,15 +44,18 @@ const Dashboard = () => {
     }
   }, [authCheckComplete, dispatch]);
 
-  // ✅ Navigate to full booking list page
-  const handleViewAllBookings = () => {
-    navigate("/bookings");
-  };
+  // Add debug logging to check bookings data
+  useEffect(() => {
+    if (bookings && bookings.length > 0) {
+      console.log("Dashboard received bookings:", bookings);
+    }
+  }, [bookings]);
+
 
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Welcome, {localUserData?.name || "User"}</h1>
+        <h1>Booking List</h1>
       </header>
 
       <section className="bookings-section">
@@ -59,16 +63,17 @@ const Dashboard = () => {
 
         {isLoading && <p>Loading bookings...</p>}
         {isError && <p className="error-text">Error: {bookingMessage || "Failed to load bookings"}</p>}
-        {!isLoading && !isError && (!bookings || bookings.length === 0) && <p>No bookings found.</p>}
-
-        {bookings && bookings.length > 0 && (
+        
+        {!isLoading && !isError && (
           <>
-            <BookingList data={bookings.slice(0, 5)} /> {/* Show only 5 recent bookings */}
-
-            {/* ✅ Button to View Full Booking List */}
-            <button className="view-all-btn" onClick={handleViewAllBookings}>
-              View All Bookings
-            </button>
+            {(!bookings || bookings.length === 0) ? (
+              <p>No bookings found.</p>
+            ) : (
+              <>
+                <BookingList data={bookings.slice(0, 5)} /> {/* Show only 5 recent bookings */}
+                
+              </>
+            )}
           </>
         )}
       </section>
