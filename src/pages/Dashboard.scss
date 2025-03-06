@@ -4,20 +4,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    max-width: 1200px;
     min-height: 100vh; // Ensure the container takes the full height of the viewport
     padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #f4f4f4;
-  
-    .bookings-section {
-      width: 100%;
-      max-width: 1200px; // Adjust the width as needed
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
   
       h2 {
         font-size: 1.75rem;
@@ -43,5 +37,4 @@
         overflow: auto; // Ensure it remains scrollable if content overflows
       }
     }
-  }
-  
+   

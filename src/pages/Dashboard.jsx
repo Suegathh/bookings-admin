@@ -54,7 +54,10 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      
+      <header className="dashboard-header">
+        <h1>Booking List</h1>
+      </header>
+
       <section className="bookings-section">
         <h2>Recent Bookings</h2>
 

@@ -8,12 +8,21 @@ import Carousel from "../components/Carousel";
 const API_URL = "https://bookings-backend-g8dm.onrender.com";
 
 const Room = () => {
-  const { isSuccess } = useSelector((state) => state.room);
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isSuccess } = useSelector((state) => state.room);
+  const user = useSelector((state) => state.auth.user); // 🔒 Check if user is logged in
+
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // 🔒 Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   // ✅ Handle Navigation After Room Deletion
   useEffect(() => {
@@ -25,6 +34,8 @@ const Room = () => {
 
   // ✅ Fetch Room Details
   useEffect(() => {
+    if (!user) return; // Stop fetching if user is not logged in
+
     const getRoom = async () => {
       setLoading(true);
       try {
@@ -45,7 +56,7 @@ const Room = () => {
     };
 
     getRoom();
-  }, [id]);
+  }, [id, user]);
 
   const handleDelete = () => {
     dispatch(deleteRoom(id));

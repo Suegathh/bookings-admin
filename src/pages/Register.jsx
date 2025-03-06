@@ -44,8 +44,6 @@ const Register = () => {
     };
     return (
       <div className="container">
-        <h1 className="heading center">Register</h1>
-  
         <div className="form-wrapper">
           <form onSubmit={handleSubmit}>
             <div className="input-group">
@@ -82,6 +80,8 @@ const Register = () => {
             </div>
   
             <button type="submit">Submit</button>
+
+            <p>Already have an account? <a href="/login"> Signin </a></p>
           </form>
         </div>
       </div>
