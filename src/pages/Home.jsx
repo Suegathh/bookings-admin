@@ -20,7 +20,7 @@ const Home = () => {
           </p>
 
           {/* CTA Button */}
-          <button className="cta-button" onClick={() => navigate("/rooms")}>
+          <button className="cta-button" onClick={() => navigate("/login")}>
             Explore Rooms
           </button>
         </div>
