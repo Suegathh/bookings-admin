@@ -2,19 +2,17 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getBookings, reset } from "../features/booking/bookingSlice";
-import BookingList from "../components/BookingList";
-import "./Dashboard.scss"; // Import the new stylesheet
+import "./Dashboard.scss";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
-  const [localUserData, setLocalUserData] = useState(null);
 
   // Redux state selectors
   const { user } = useSelector((state) => state.auth);
-  const { bookings, isLoading, isError, message: bookingMessage, isSuccess } = useSelector((state) => state.booking);
+  const { bookings, isLoading, isError, message, isSuccess } = useSelector((state) => state.booking);
 
   useEffect(() => {
     if (isSuccess) {
@@ -23,18 +21,14 @@ const Dashboard = () => {
   }, [isSuccess, dispatch]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user"))
-      : null;
     const token = localStorage.getItem("token");
 
-    if (!token || !storedUser) {
+    if (!token) {
       console.warn("❌ No valid authentication credentials");
       navigate("/login");
       return;
     }
 
-    setLocalUserData(storedUser);
     setAuthCheckComplete(true);
   }, [navigate]);
 
@@ -44,14 +38,6 @@ const Dashboard = () => {
     }
   }, [authCheckComplete, dispatch]);
 
-  // Add debug logging to check bookings data
-  useEffect(() => {
-    if (bookings && bookings.length > 0) {
-      console.log("Dashboard received bookings:", bookings);
-    }
-  }, [bookings]);
-
-
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -59,20 +45,43 @@ const Dashboard = () => {
       </header>
 
       <section className="bookings-section">
-        {isLoading && <p>Loading bookings...</p>}
-        {isError && <p className="error-text">Error: {bookingMessage || "Failed to load bookings"}</p>}
-        
-        {!isLoading && !isError && (
-          <>
-            {(!bookings || bookings.length === 0) ? (
-              <p>No bookings found.</p>
-            ) : (
-              <>
-                <BookingList data={bookings.slice(0, 5)} /> {/* Show only 5 recent bookings */}
-                
-              </>
-            )}
-          </>
+        {isLoading && <p className="loading-text">Loading bookings...</p>}
+        {isError && <p className="error-text">Error: {message || "Failed to load bookings"}</p>}
+
+        {!isLoading && !isError && bookings.length > 0 ? (
+          <div className="table-container">
+            <table className="booking-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Room</th>
+                  <th>Confirmed</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookings.map((booking) => (
+                  <tr key={booking._id}>
+                    <td>{booking.name || booking.customerName || booking.userName || "N/A"}</td>
+                    <td>{booking.email || "N/A"}</td>
+                    <td>{booking.roomId?.name || booking.room?.name || "Unknown Room"}</td>
+                    <td>{booking.confirmed ? "Yes" : "No"}</td>
+                    <td>
+                      <button 
+                        className="view-btn" 
+                        onClick={() => navigate(`/bookings/${booking._id}`)}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="no-bookings-text">No bookings found.</p>
         )}
       </section>
     </div>

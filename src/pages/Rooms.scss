@@ -1,10 +1,12 @@
 .rooms-container {
-  background-color: rgb(219, 231, 227);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
   animation: fadeIn 1.5s ease-in-out;
+  min-height: 100vh;
+  background-color: rgb(219, 231, 227);
+  margin-left: 250px; /* Push content to the right, making space for sidebar */
 
   .container {
     background-color: #e4e6f4;
@@ -42,11 +44,32 @@
   }
 }
 
+/* Adjust Layout to Prevent Sidebar Overlap */
+.main-content {
+  margin-left: 250px; /* Shift main content to avoid sidebar overlap */
+  padding: 2rem;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background: #333;
+  color: white;
+  padding: 2rem;
+}
+
+/* Loading Container */
 .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
+  height: 100vh;
+
   .heading {
     font-size: 2rem;
     color: #007bff;
@@ -68,7 +91,19 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .sidebar {
+    width: 100%; /* Full width sidebar on mobile */
+    height: auto;
+    position: relative;
+  }
+
+  .main-content {
+    margin-left: 0; /* No left margin on mobile */
+    padding: 1rem;
+  }
+
   .rooms-container {
+    margin-left: 0;
     padding: 1rem;
   }
 

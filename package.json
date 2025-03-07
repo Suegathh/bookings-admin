@@ -7,6 +7,7 @@
     "axios": "^1.8.1",
     "cloudinary": "^2.5.1",
     "cra-template-redux": "2.0.0",
+    "lucide-react": "^0.477.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-icons": "^5.5.0",

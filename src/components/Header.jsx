@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Header.scss";
-import { useSelector, useDispatch } from "react-redux";
+import { Menu, Home, LogOut, PlusCircle, LayoutDashboard, Bed } from "lucide-react";
+import { useDispatch } from "react-redux";
 import { logoutUser, reset } from "../features/auth/authSlice";
 
+const menuItems = [
+  { title: "Home", url: "/", icon: <Home size={20} /> },
+  { title: "Rooms", url: "/rooms", icon: <Bed size={20} /> },
+  { title: "Dashboard", url: "/dashboard", icon: <LayoutDashboard size={20} /> },
+  { title: "Create", url: "/create", icon: <PlusCircle size={20} /> },
+];
+
 const Header = () => {
-  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -15,29 +22,51 @@ const Header = () => {
     setMenuOpen(false);
   };
 
-  if (!user) {
-    return null;
-  }
-
   return (
-    <header className="main-header">
-      {/* Logo on the Left */}
-      <Link to="/" className="logo">Sand Dunes Villa</Link>
+    <>
+      {/* Sidebar for Desktop */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <h2 className="logo">Sand Dunes Villa</h2>
+        </div>
+        <nav className="sidebar-menu">
+          {menuItems.map((item) => (
+            <Link key={item.title} to={item.url} className="sidebar-link">
+              {item.icon}
+              <span>{item.title}</span>
+            </Link>
+          ))}
+          <button className="logout-btn" onClick={handleLogout}>
+            <LogOut size={20} />
+            Logout
+          </button>
+        </nav>
+      </aside>
 
-      {/* Dropdown Menu Button on the Right */}
-      <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
-        {menuOpen ? "✖ Close" : "☰ Menu"}
-      </button>
+      {/* Header for Mobile */}
+      <header className="mobile-header">
+        <div className="header-content">
+          <h1 className="logo">Sand Dunes Villa</h1>
+          <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+            <Menu size={24} />
+          </button>
+        </div>
 
-      {/* Dropdown Navigation Menu (Visible on Mobile without Scroll) */}
-      <nav className={`dropdown-menu ${menuOpen ? "open" : ""}`}>
-        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
-        <Link to="/rooms" onClick={() => setMenuOpen(false)}>Rooms</Link>
-        <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-        <Link to="/rooms/create" onClick={() => setMenuOpen(false)}>Create</Link>
-        <button onClick={handleLogout}>Logout</button>
-      </nav>
-    </header>
+        {/* Dropdown Menu (Mobile Only) */}
+        <nav className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+          {menuItems.map((item) => (
+            <Link key={item.title} to={item.url} className="mobile-link" onClick={() => setMenuOpen(false)}>
+              {item.icon}
+              <span>{item.title}</span>
+            </Link>
+          ))}
+          <button className="logout-btn" onClick={handleLogout}>
+            <LogOut size={20} />
+            Logout
+          </button>
+        </nav>
+      </header>
+    </>
   );
 };
 

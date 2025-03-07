@@ -25,10 +25,8 @@ const App = () => {
           <Route path="/rooms/create" element={<CreateRoom />} />
           <Route path="/rooms/all/:id" element={<Room />} />
           <Route path="/rooms/edit/:id" element={<EditRoom />} />
-          
-          {/* ✅ Add missing route for booking list */}
-          <Route path="/bookings" element={<BookingList />} />
-          <Route path="/bookings/:id" element={<Booking />} /> {/* Fixed path */}
+          {/* <Route path="/bookings" element={<BookingList />} /> */}
+          <Route path="/bookings/:id" element={<Booking />} />
         </Routes>
       </Router>
     </div>
