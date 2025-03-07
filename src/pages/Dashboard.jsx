@@ -25,7 +25,7 @@ const Dashboard = () => {
 
     if (!token) {
       console.warn("❌ No valid authentication credentials");
-      navigate("/login");
+      navigate("/");
       return;
     }
 

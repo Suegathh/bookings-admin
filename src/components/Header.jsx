@@ -4,22 +4,27 @@ import "./Header.scss";
 import { Menu, Home, LogOut, PlusCircle, LayoutDashboard, Bed } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logoutUser, reset } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
+
+
 
 const menuItems = [
   { title: "Home", url: "/", icon: <Home size={20} /> },
   { title: "Rooms", url: "/rooms", icon: <Bed size={20} /> },
   { title: "Dashboard", url: "/dashboard", icon: <LayoutDashboard size={20} /> },
-  { title: "Create", url: "/create", icon: <PlusCircle size={20} /> },
+  { title: "Create", url: "/rooms/create", icon: <PlusCircle size={20} /> },
 ];
 
 const Header = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logoutUser());
     dispatch(reset());
     setMenuOpen(false);
+    navigate("/"); 
   };
 
   return (
